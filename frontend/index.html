@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lightning Payment - Zero KYB Checkout</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1><i class="fas fa-bolt"></i> Lightning Payment</h1>
+            <p class="subtitle">Zero-KYB Instant Crypto Payments</p>
+        </header>
+
+        <!-- Payment Form -->
+        <div id="payment-form" class="card">
+            <h2>Create Payment</h2>
+            <form id="checkout-form">
+                <div class="form-group">
+                    <label for="amount">Amount (USD)</label>
+                    <div class="input-group">
+                        <span class="input-prefix">$</span>
+                        <input type="number" id="amount" name="amount" min="20" max="100" step="0.01" value="25.00" required>
+                    </div>
+                    <small>Minimum: $20, Maximum: $100</small>
+                </div>
+
+                <div class="form-group">
+                    <label for="description">Description (Optional)</label>
+                    <input type="text" id="description" name="description" placeholder="What's this payment for?">
+                </div>
+
+                <div class="form-group">
+                    <label for="email">Email (Optional)</label>
+                    <input type="email" id="email" name="email" placeholder="your@email.com">
+                    <small>Get a receipt (we don't verify or require this)</small>
+                </div>
+
+                <button type="submit" class="btn btn-primary">
+                    <i class="fas fa-bolt"></i> Generate Lightning Invoice
+                </button>
+            </form>
+
+            <div class="features">
+                <div class="feature">
+                    <i class="fas fa-user-slash"></i>
+                    <span>No Account Required</span>
+                </div>
+                <div class="feature">
+                    <i class="fas fa-shield-alt"></i>
+                    <span>Zero KYB/KYC</span>
+                </div>
+                <div class="feature">
+                    <i class="fas fa-rocket"></i>
+                    <span>Instant Settlement</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Payment Display -->
+        <div id="payment-display" class="card" style="display: none;">
+            <h2>Pay with Lightning</h2>
+            
+            <div class="invoice-info">
+                <div class="amount-display">
+                    <span class="currency">$</span>
+                    <span id="display-amount">0.00</span>
+                </div>
+                <p id="display-description"></p>
+            </div>
+
+            <div class="qr-container">
+                <div id="qr-code"></div>
+                <div class="qr-loading">
+                    <i class="fas fa-spinner fa-spin"></i>
+                    <p>Generating QR Code...</p>
+                </div>
+            </div>
+
+            <div class="payment-request">
+                <label>Lightning Invoice:</label>
+                <div class="copy-container">
+                    <input type="text" id="payment-request" readonly>
+                    <button class="btn-copy" onclick="copyToClipboard()">
+                        <i class="fas fa-copy"></i>
+                    </button>
+                </div>
+            </div>
+
+            <div class="payment-status" id="payment-status">
+                <i class="fas fa-clock"></i>
+                <span>Waiting for payment...</span>
+            </div>
+
+            <div class="timer" id="timer">
+                <i class="fas fa-hourglass-half"></i>
+                <span>Expires in: <span id="countdown">60:00</span></span>
+            </div>
+
+            <button class="btn btn-secondary" onclick="createNewPayment()">
+                <i class="fas fa-plus"></i> New Payment
+            </button>
+
+            <div class="wallet-apps">
+                <p>Pay with any Lightning wallet:</p>
+                <div class="wallet-grid">
+                    <span><i class="fas fa-wallet"></i> Strike</span>
+                    <span><i class="fas fa-wallet"></i> Cash App</span>
+                    <span><i class="fas fa-wallet"></i> Muun</span>
+                    <span><i class="fas fa-wallet"></i> Blue Wallet</span>
+                    <span><i class="fas fa-wallet"></i> Phoenix</span>
+                    <span><i class="fas fa-wallet"></i> Breez</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Success State -->
+        <div id="payment-success" class="card success-card" style="display: none;">
+            <div class="success-icon">
+                <i class="fas fa-check-circle"></i>
+            </div>
+            <h2>Payment Successful!</h2>
+            <p class="success-message">Your Lightning payment has been confirmed.</p>
+            <div class="success-details">
+                <p><strong>Order ID:</strong> <span id="success-order-id"></span></p>
+                <p><strong>Amount:</strong> $<span id="success-amount"></span></p>
+                <p><strong>Paid at:</strong> <span id="success-time"></span></p>
+            </div>
+            <button class="btn btn-primary" onclick="createNewPayment()">
+                <i class="fas fa-plus"></i> Make Another Payment
+            </button>
+        </div>
+
+        <!-- Error State -->
+        <div id="payment-error" class="card error-card" style="display: none;">
+            <div class="error-icon">
+                <i class="fas fa-exclamation-circle"></i>
+            </div>
+            <h2>Payment Failed</h2>
+            <p class="error-message" id="error-message">Something went wrong with your payment.</p>
+            <button class="btn btn-primary" onclick="createNewPayment()">
+                <i class="fas fa-redo"></i> Try Again
+            </button>
+        </div>
+    </div>
+
+    <footer>
+        <p>Powered by Lightning Network • Zero-KYB • Self-Hosted</p>
+    </footer>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+    <script src="app.js"></script>
+</body>
+</html>

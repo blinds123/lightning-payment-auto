@@ -1,16 +1,28 @@
-# Lightning Payment System - Zero KYB
+# Lightning Payment System - Zero KYB ⚡
 
-A production-ready Lightning Network payment system that accepts $20-100 payments with zero KYB requirements.
+A production-ready Lightning Network payment system that accepts $20-100 payments with **ABSOLUTE ZERO KYB** requirements using BTCPay Server.
+
+## 🛡️ ZERO-KYB GUARANTEE
+
+- ❌ **NO identity verification for merchants**
+- ❌ **NO customer account creation required**
+- ❌ **NO app downloads needed**
+- ❌ **NO ID uploads or selfies**
+- ✅ **Complete financial sovereignty**
+- ✅ **Anonymous customer payments**
+- ✅ **Self-hosted infrastructure**
 
 ## 🚀 Features
 
-- ⚡ Lightning Network payments via Strike API or BTCPay Server
-- 🔒 Zero KYB/KYC requirements
+- ⚡ Lightning Network payments via BTCPay Server (NOT Strike)
+- 🔒 Zero KYB/KYC requirements (confirmed)
 - 💰 $20-100 payment range enforcement
 - 🛡️ Production security (Helmet, CORS, rate limiting)
 - 📊 Supabase database integration
 - 🔄 Automated deployment via GitHub Actions
 - 🎯 RESTful API with comprehensive error handling
+- 📱 QR code payments with any Lightning wallet
+- 🌍 Global accessibility without restrictions
 
 ## 🏃 Quick Start
 

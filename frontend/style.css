@@ -1,0 +1,486 @@
+/* Global Styles */
+:root {
+    --primary-color: #f7931a;
+    --secondary-color: #4a5568;
+    --success-color: #48bb78;
+    --error-color: #f56565;
+    --bg-color: #f7fafc;
+    --card-bg: #ffffff;
+    --text-primary: #2d3748;
+    --text-secondary: #718096;
+    --border-color: #e2e8f0;
+    --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+    background-color: var(--bg-color);
+    color: var(--text-primary);
+    line-height: 1.6;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+
+.container {
+    max-width: 480px;
+    margin: 0 auto;
+    padding: 20px;
+    flex: 1;
+}
+
+/* Header */
+header {
+    text-align: center;
+    margin-bottom: 40px;
+    padding-top: 20px;
+}
+
+header h1 {
+    font-size: 32px;
+    font-weight: 700;
+    color: var(--primary-color);
+    margin-bottom: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+}
+
+header h1 i {
+    font-size: 28px;
+}
+
+.subtitle {
+    color: var(--text-secondary);
+    font-size: 16px;
+}
+
+/* Card */
+.card {
+    background-color: var(--card-bg);
+    border-radius: 12px;
+    padding: 32px;
+    box-shadow: var(--shadow);
+    margin-bottom: 20px;
+}
+
+.card h2 {
+    font-size: 24px;
+    margin-bottom: 24px;
+    color: var(--text-primary);
+}
+
+/* Form */
+.form-group {
+    margin-bottom: 20px;
+}
+
+.form-group label {
+    display: block;
+    font-weight: 500;
+    margin-bottom: 8px;
+    color: var(--text-primary);
+}
+
+.form-group input {
+    width: 100%;
+    padding: 12px 16px;
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    font-size: 16px;
+    transition: all 0.2s;
+}
+
+.form-group input:focus {
+    outline: none;
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 3px rgba(247, 147, 26, 0.1);
+}
+
+.form-group small {
+    display: block;
+    margin-top: 6px;
+    color: var(--text-secondary);
+    font-size: 14px;
+}
+
+.input-group {
+    position: relative;
+    display: flex;
+    align-items: center;
+}
+
+.input-prefix {
+    position: absolute;
+    left: 16px;
+    font-size: 18px;
+    font-weight: 500;
+    color: var(--text-secondary);
+}
+
+.input-group input {
+    padding-left: 36px;
+}
+
+/* Buttons */
+.btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    padding: 14px 24px;
+    border: none;
+    border-radius: 8px;
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s;
+    width: 100%;
+    text-decoration: none;
+}
+
+.btn-primary {
+    background-color: var(--primary-color);
+    color: white;
+}
+
+.btn-primary:hover:not(:disabled) {
+    background-color: #e68309;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(247, 147, 26, 0.3);
+}
+
+.btn-secondary {
+    background-color: var(--secondary-color);
+    color: white;
+}
+
+.btn-secondary:hover:not(:disabled) {
+    background-color: #2d3748;
+    transform: translateY(-1px);
+}
+
+.btn:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+/* Features */
+.features {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 16px;
+    margin-top: 32px;
+    padding-top: 32px;
+    border-top: 1px solid var(--border-color);
+}
+
+.feature {
+    text-align: center;
+}
+
+.feature i {
+    font-size: 24px;
+    color: var(--primary-color);
+    margin-bottom: 8px;
+    display: block;
+}
+
+.feature span {
+    font-size: 12px;
+    color: var(--text-secondary);
+}
+
+/* Payment Display */
+.invoice-info {
+    text-align: center;
+    margin-bottom: 32px;
+}
+
+.amount-display {
+    font-size: 48px;
+    font-weight: 700;
+    color: var(--text-primary);
+    margin-bottom: 8px;
+}
+
+.currency {
+    font-size: 32px;
+    color: var(--text-secondary);
+}
+
+#display-description {
+    color: var(--text-secondary);
+    font-size: 16px;
+}
+
+/* QR Code */
+.qr-container {
+    position: relative;
+    display: flex;
+    justify-content: center;
+    margin-bottom: 24px;
+    min-height: 256px;
+}
+
+#qr-code {
+    padding: 16px;
+    background: white;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.qr-loading {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    text-align: center;
+}
+
+.qr-loading i {
+    font-size: 48px;
+    color: var(--primary-color);
+    margin-bottom: 16px;
+}
+
+/* Payment Request */
+.payment-request {
+    margin-bottom: 24px;
+}
+
+.payment-request label {
+    display: block;
+    font-weight: 500;
+    margin-bottom: 8px;
+    color: var(--text-primary);
+}
+
+.copy-container {
+    display: flex;
+    gap: 8px;
+}
+
+.copy-container input {
+    flex: 1;
+    padding: 12px;
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    font-family: monospace;
+    font-size: 12px;
+    background-color: #f7fafc;
+}
+
+.btn-copy {
+    padding: 12px 16px;
+    background-color: var(--secondary-color);
+    color: white;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.btn-copy:hover {
+    background-color: #2d3748;
+}
+
+/* Payment Status */
+.payment-status {
+    text-align: center;
+    padding: 16px;
+    background-color: #f7fafc;
+    border-radius: 8px;
+    margin-bottom: 16px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+}
+
+.payment-status i {
+    font-size: 20px;
+    color: var(--text-secondary);
+}
+
+.payment-status.success {
+    background-color: #c6f6d5;
+    color: #22543d;
+}
+
+.payment-status.success i {
+    color: var(--success-color);
+}
+
+/* Timer */
+.timer {
+    text-align: center;
+    color: var(--text-secondary);
+    font-size: 14px;
+    margin-bottom: 24px;
+}
+
+.timer i {
+    margin-right: 4px;
+}
+
+#countdown {
+    font-weight: 600;
+    color: var(--text-primary);
+}
+
+/* Wallet Apps */
+.wallet-apps {
+    margin-top: 32px;
+    padding-top: 32px;
+    border-top: 1px solid var(--border-color);
+    text-align: center;
+}
+
+.wallet-apps p {
+    color: var(--text-secondary);
+    margin-bottom: 16px;
+    font-size: 14px;
+}
+
+.wallet-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 12px;
+}
+
+.wallet-grid span {
+    font-size: 12px;
+    color: var(--text-secondary);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 4px;
+}
+
+/* Success/Error Cards */
+.success-card,
+.error-card {
+    text-align: center;
+}
+
+.success-icon,
+.error-icon {
+    font-size: 64px;
+    margin-bottom: 24px;
+}
+
+.success-icon {
+    color: var(--success-color);
+}
+
+.error-icon {
+    color: var(--error-color);
+}
+
+.success-message,
+.error-message {
+    color: var(--text-secondary);
+    margin-bottom: 24px;
+}
+
+.success-details {
+    background-color: #f7fafc;
+    padding: 20px;
+    border-radius: 8px;
+    margin-bottom: 24px;
+    text-align: left;
+}
+
+.success-details p {
+    margin-bottom: 8px;
+    color: var(--text-primary);
+}
+
+.success-details strong {
+    color: var(--text-secondary);
+}
+
+/* Footer */
+footer {
+    text-align: center;
+    padding: 20px;
+    color: var(--text-secondary);
+    font-size: 14px;
+    border-top: 1px solid var(--border-color);
+    background-color: var(--card-bg);
+}
+
+/* Responsive */
+@media (max-width: 640px) {
+    .container {
+        padding: 16px;
+    }
+    
+    .card {
+        padding: 24px;
+    }
+    
+    header h1 {
+        font-size: 28px;
+    }
+    
+    .features {
+        grid-template-columns: 1fr;
+        gap: 12px;
+    }
+    
+    .wallet-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+    
+    .amount-display {
+        font-size: 36px;
+    }
+    
+    .currency {
+        font-size: 24px;
+    }
+}
+
+/* Loading States */
+@keyframes spin {
+    from {
+        transform: rotate(0deg);
+    }
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+.fa-spinner {
+    animation: spin 1s linear infinite;
+}
+
+/* Print Styles */
+@media print {
+    body {
+        background: white;
+    }
+    
+    .container {
+        max-width: 100%;
+    }
+    
+    .card {
+        box-shadow: none;
+        border: 1px solid var(--border-color);
+    }
+    
+    .btn,
+    footer {
+        display: none;
+    }
+}
