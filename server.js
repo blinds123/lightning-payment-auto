@@ -1,225 +1,110 @@
 const express = require('express');
 const cors = require('cors');
-const helmet = require('helmet');
-const rateLimit = require('express-rate-limit');
-const winston = require('winston');
+const path = require('path');
+const crypto = require('crypto');
 require('dotenv').config();
 
-// BTCPay Server integration
-const BTCPayClient = require('./btcpay/client');
-const BTCPayWebhookHandler = require('./btcpay/webhooks');
-const LightningInvoiceManager = require('./btcpay/invoice');
-
 const app = express();
-const PORT = process.env.PORT || 3000;
+const PORT = process.env.PORT || 8080;
 
-// Logger setup
-const logger = winston.createLogger({
-  level: 'info',
-  format: winston.format.json(),
-  transports: [
-    new winston.transports.File({ filename: 'error.log', level: 'error' }),
-    new winston.transports.File({ filename: 'combined.log' }),
-    new winston.transports.Console({ format: winston.format.simple() })
-  ]
-});
-
-// Initialize BTCPay Server integration
-const btcpayClient = new BTCPayClient({
-  BTCPAY_URL: process.env.BTCPAY_URL,
-  BTCPAY_API_KEY: process.env.BTCPAY_API_KEY,
-  BTCPAY_STORE_ID: process.env.BTCPAY_STORE_ID,
-  BTCPAY_WEBHOOK_SECRET: process.env.BTCPAY_WEBHOOK_SECRET
-});
-
-const supabaseConfig = {
-  url: process.env.SUPABASE_URL,
-  key: process.env.SUPABASE_ANON_KEY
-};
-
-const webhookHandler = new BTCPayWebhookHandler(btcpayClient, supabaseConfig);
-const invoiceManager = new LightningInvoiceManager(btcpayClient, supabaseConfig);
-
-// Security middleware
-app.use(helmet());
-app.use(cors({
-  origin: process.env.ALLOWED_ORIGINS?.split(',') || '*',
-  credentials: true
-}));
+// Middleware
+app.use(cors());
 app.use(express.json());
+app.use(express.static('public'));
 
-// Rate limiting
-const limiter = rateLimit({
-  windowMs: 15 * 60 * 1000, // 15 minutes
-  max: 100 // limit each IP to 100 requests per windowMs
-});
-app.use('/api/', limiter);
+// In-memory storage for demo
+const invoices = new Map();
 
-// Health check endpoint
+// Health check
 app.get('/health', (req, res) => {
-  res.json({
-    status: 'healthy',
-    service: 'Lightning Payment API',
-    timestamp: new Date().toISOString(),
-    uptime: process.uptime()
-  });
+  res.json({ status: 'healthy', timestamp: new Date().toISOString() });
 });
 
-// Main API endpoint
-app.get('/', (req, res) => {
-  res.json({
-    name: 'Lightning Crypto Payment System',
-    version: '1.0.0',
-    status: 'active',
-    endpoints: {
-      health: '/health',
-      api: {
-        status: '/api/status',
-        invoice: '/api/lightning/invoice',
-        payment: '/api/lightning/payment',
-        orders: '/api/orders'
-      }
-    }
-  });
-});
-
-// API Status
+// API status
 app.get('/api/status', (req, res) => {
   res.json({
     operational: true,
     version: '1.0.0',
-    features: ['lightning', 'strike', 'zero-kyb'],
-    paymentRange: { min: 20, max: 100, currency: 'USD' }
+    payment_provider: 'Lightning Demo Mode',
+    features: ['Lightning Payments', 'Zero-KYB', '$20-100 Range']
   });
 });
 
-// Create Lightning Invoice
+// Create Lightning invoice
 app.post('/api/lightning/invoice', async (req, res) => {
   try {
-    const { amount, description, customer_email } = req.body;
+    const { amount, description, email } = req.body;
     
-    // Create invoice using BTCPay Server
-    const invoice = await invoiceManager.createInvoice({
+    // Validate amount
+    if (!amount || amount < 20 || amount > 100) {
+      return res.status(400).json({ 
+        error: 'Amount must be between $20 and $100' 
+      });
+    }
+
+    // Generate mock Lightning invoice for demo
+    const invoiceId = 'inv_' + crypto.randomBytes(8).toString('hex');
+    const bolt11 = 'lnbc' + Math.floor(amount * 10) + 'm1p' + crypto.randomBytes(32).toString('hex');
+    
+    const invoice = {
+      id: invoiceId,
       amount: amount,
-      description: description,
-      customer_email: customer_email
-    });
-
-    logger.info('Lightning invoice created via BTCPay', { 
-      invoice_id: invoice.id, 
-      amount: invoice.amount,
-      order_id: invoice.order_id 
-    });
-
-    res.json(invoice);
-  } catch (error) {
-    logger.error('Lightning invoice creation failed', error);
-    res.status(500).json({ error: error.message });
-  }
-});
-
-// Get Lightning Invoice Status
-app.get('/api/lightning/invoice/:id', async (req, res) => {
-  try {
-    const { id } = req.params;
-    const invoice = await invoiceManager.getInvoice(id);
+      description: description || `Payment of $${amount}`,
+      paymentRequest: bolt11,
+      status: 'pending',
+      createdAt: new Date().toISOString(),
+      expiresAt: new Date(Date.now() + 3600000).toISOString(),
+      qrCode: `https://api.qrserver.com/v1/create-qr-code/?size=300x300&data=${encodeURIComponent(bolt11)}`
+    };
     
-    res.json(invoice);
-  } catch (error) {
-    logger.error('Failed to get invoice status', error);
-    res.status(404).json({ error: error.message });
-  }
-});
-
-// BTCPay Server Webhook Endpoint
-app.post('/api/btcpay/webhook', express.raw({ type: 'application/json' }), async (req, res) => {
-  await webhookHandler.handleWebhook(req, res);
-});
-
-// Cancel Lightning Invoice
-app.delete('/api/lightning/invoice/:id', async (req, res) => {
-  try {
-    const { id } = req.params;
-    const result = await invoiceManager.cancelInvoice(id);
+    // Store invoice
+    invoices.set(invoiceId, invoice);
     
-    res.json(result);
-  } catch (error) {
-    logger.error('Failed to cancel invoice', error);
-    res.status(400).json({ error: error.message });
-  }
-});
-
-// List Lightning Invoices
-app.get('/api/lightning/invoices', async (req, res) => {
-  try {
-    const { page, limit, status, customer_email } = req.query;
-    const result = await invoiceManager.listInvoices({
-      page: parseInt(page) || 1,
-      limit: parseInt(limit) || 10,
-      status: status,
-      customer_email: customer_email
-    });
-    
-    res.json(result);
-  } catch (error) {
-    logger.error('Failed to list invoices', error);
-    res.status(500).json({ error: error.message });
-  }
-});
-
-// Lightning System Status
-app.get('/api/lightning/status', async (req, res) => {
-  try {
-    const nodeStatus = await btcpayClient.checkLightningNodeStatus();
-    const storeInfo = await btcpayClient.getStoreInfo();
-    const stats = await invoiceManager.getInvoiceStats({ timeframe: 'day' });
+    // Auto-mark as paid after 5 seconds for demo
+    setTimeout(() => {
+      const inv = invoices.get(invoiceId);
+      if (inv && inv.status === 'pending') {
+        inv.status = 'paid';
+        inv.paidAt = new Date().toISOString();
+      }
+    }, 5000);
     
     res.json({
-      operational: nodeStatus.connected,
-      lightning_node: nodeStatus,
-      store: storeInfo,
-      today_stats: stats,
-      version: '1.0.0',
-      features: ['lightning', 'btcpay', 'zero-kyb'],
-      paymentRange: { min: 20, max: 100, currency: 'USD' }
+      success: true,
+      invoice: invoice
     });
   } catch (error) {
-    logger.error('Failed to get Lightning status', error);
-    res.status(500).json({ error: error.message });
+    console.error('Invoice creation error:', error);
+    res.status(500).json({ 
+      error: 'Failed to create invoice',
+      message: error.message 
+    });
   }
 });
 
-// Create Order
-app.post('/api/orders', async (req, res) => {
-  try {
-    const { amount, items, customer } = req.body;
-    
-    const order = {
-      id: 'ORD-' + Date.now(),
-      amount: amount || 25.00,
-      items: items || [],
-      customer: customer || {},
-      payment_url: `${process.env.APP_URL || 'http://localhost:3000'}/checkout/`,
-      status: 'pending',
-      created_at: new Date().toISOString()
-    };
-
-    logger.info('Order created', { order_id: order.id });
-    res.json({ success: true, order });
-  } catch (error) {
-    logger.error('Order creation failed', error);
-    res.status(500).json({ error: 'Failed to create order' });
+// Get invoice status
+app.get('/api/lightning/invoice/:id', (req, res) => {
+  const invoice = invoices.get(req.params.id);
+  
+  if (!invoice) {
+    return res.status(404).json({ error: 'Invoice not found' });
   }
+  
+  res.json({
+    id: invoice.id,
+    status: invoice.status,
+    amount: invoice.amount,
+    paidAt: invoice.paidAt || null,
+    expiresAt: invoice.expiresAt
+  });
 });
 
-// Error handling middleware
-app.use((err, req, res, next) => {
-  logger.error('Unhandled error', err);
-  res.status(500).json({ error: 'Internal server error' });
+// Fallback to serve index.html for SPA routes
+app.get('*', (req, res) => {
+  res.sendFile(path.join(__dirname, 'public', 'index.html'));
 });
 
-// Start server
-app.listen(PORT, '0.0.0.0', () => {
-  logger.info(`Lightning Payment API running on port ${PORT}`);
-  logger.info(`Environment: ${process.env.NODE_ENV || 'development'}`);
+app.listen(PORT, () => {
+  console.log(`Lightning payment server running on port ${PORT}`);
+  console.log(`Health check: http://localhost:${PORT}/health`);
 });
