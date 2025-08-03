@@ -249,7 +249,7 @@
                 </div>
                 
                 <button id="generate-invoice" type="button">
-                    ⚡ Generate Lightning Invoice
+                    💳 Continue to Payment
                 </button>
                 
                 <div class="features">
@@ -301,35 +301,14 @@
                 return;
             }
             
-            // Disable button
-            const button = document.getElementById('generate-invoice');
-            button.disabled = true;
-            button.innerHTML = '<div class="spinner" style="display: inline-block; width: 20px; height: 20px; margin: 0;"></div> Creating Invoice...';
+            // Redirect to checkout page with payment options
+            const params = new URLSearchParams({
+                amount: amount.toFixed(2),
+                description: description || `Payment of $${amount}`,
+                email: email || ''
+            });
             
-            try {
-                const response = await fetch(`${API_URL}/api/lightning/invoice`, {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify({ amount, description, email })
-                });
-                
-                const data = await response.json();
-                
-                if (!response.ok) {
-                    throw new Error(data.error || 'Failed to create invoice');
-                }
-                
-                currentInvoice = data.invoice;
-                showInvoice(data.invoice);
-                startStatusCheck(data.invoice.id);
-                
-            } catch (error) {
-                showError(error.message);
-                button.disabled = false;
-                button.innerHTML = '⚡ Generate Lightning Invoice';
-            }
+            window.location.href = `/checkout.html?${params.toString()}`;
         }
         
         function showInvoice(invoice) {

@@ -1,0 +1,562 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Checkout - Pay with Card or Lightning</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: #f7f8fa;
+            color: #1a1a1a;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 1rem;
+        }
+        
+        .checkout-container {
+            max-width: 600px;
+            width: 100%;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.08);
+            overflow: hidden;
+        }
+        
+        .checkout-header {
+            background: linear-gradient(135deg, #f7931a 0%, #ffb84d 100%);
+            padding: 2rem;
+            text-align: center;
+            color: white;
+        }
+        
+        .checkout-header h1 {
+            font-size: 2rem;
+            margin-bottom: 0.5rem;
+        }
+        
+        .checkout-header p {
+            opacity: 0.9;
+            font-size: 1.125rem;
+        }
+        
+        .checkout-body {
+            padding: 2rem;
+        }
+        
+        .payment-amount {
+            background: #f7f8fa;
+            border-radius: 12px;
+            padding: 1.5rem;
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+        
+        .amount-display {
+            font-size: 3rem;
+            font-weight: 700;
+            color: #1a1a1a;
+            margin-bottom: 0.5rem;
+        }
+        
+        .amount-description {
+            color: #6b7280;
+            font-size: 1rem;
+        }
+        
+        .payment-methods {
+            margin-bottom: 2rem;
+        }
+        
+        .payment-methods h3 {
+            font-size: 1.25rem;
+            margin-bottom: 1rem;
+            color: #1a1a1a;
+        }
+        
+        .payment-option {
+            border: 2px solid #e5e7eb;
+            border-radius: 12px;
+            padding: 1.25rem;
+            margin-bottom: 1rem;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+        
+        .payment-option:hover {
+            border-color: #f7931a;
+            background: #fffbf5;
+        }
+        
+        .payment-option.selected {
+            border-color: #f7931a;
+            background: #fffbf5;
+        }
+        
+        .payment-icon {
+            width: 48px;
+            height: 48px;
+            background: #f3f4f6;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+        }
+        
+        .payment-details {
+            flex: 1;
+        }
+        
+        .payment-title {
+            font-weight: 600;
+            margin-bottom: 0.25rem;
+            color: #1a1a1a;
+        }
+        
+        .payment-subtitle {
+            font-size: 0.875rem;
+            color: #6b7280;
+        }
+        
+        .payment-badge {
+            background: #10b981;
+            color: white;
+            padding: 0.25rem 0.75rem;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 600;
+        }
+        
+        .form-section {
+            margin-bottom: 2rem;
+            display: none;
+        }
+        
+        .form-section.active {
+            display: block;
+        }
+        
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+        
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 500;
+            color: #374151;
+        }
+        
+        .form-group input {
+            width: 100%;
+            padding: 0.75rem 1rem;
+            border: 2px solid #e5e7eb;
+            border-radius: 8px;
+            font-size: 1rem;
+            transition: border-color 0.2s;
+        }
+        
+        .form-group input:focus {
+            outline: none;
+            border-color: #f7931a;
+        }
+        
+        .card-inputs {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 1rem;
+        }
+        
+        .pay-button {
+            width: 100%;
+            padding: 1.25rem;
+            background: linear-gradient(135deg, #f7931a 0%, #ffb84d 100%);
+            border: none;
+            border-radius: 12px;
+            color: white;
+            font-size: 1.125rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+        }
+        
+        .pay-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 30px rgba(247, 147, 26, 0.3);
+        }
+        
+        .pay-button:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none;
+        }
+        
+        .security-info {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            justify-content: center;
+            margin-top: 1.5rem;
+            color: #6b7280;
+            font-size: 0.875rem;
+        }
+        
+        .lightning-invoice {
+            text-align: center;
+            padding: 2rem;
+            background: #f7f8fa;
+            border-radius: 12px;
+        }
+        
+        .qr-code {
+            margin: 1.5rem 0;
+        }
+        
+        .qr-code img {
+            border-radius: 8px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+        }
+        
+        .invoice-text {
+            background: white;
+            padding: 1rem;
+            border-radius: 8px;
+            word-break: break-all;
+            font-family: monospace;
+            font-size: 0.75rem;
+            color: #374151;
+            margin: 1rem 0;
+            cursor: pointer;
+            border: 2px solid #e5e7eb;
+        }
+        
+        .invoice-text:hover {
+            border-color: #f7931a;
+        }
+        
+        .strike-iframe {
+            width: 100%;
+            height: 600px;
+            border: none;
+            border-radius: 12px;
+        }
+        
+        .spinner {
+            border: 3px solid #f3f4f6;
+            border-top: 3px solid #f7931a;
+            border-radius: 50%;
+            width: 24px;
+            height: 24px;
+            animation: spin 1s linear infinite;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        .error-message {
+            background: #fee;
+            color: #dc2626;
+            padding: 1rem;
+            border-radius: 8px;
+            margin-bottom: 1rem;
+            text-align: center;
+        }
+        
+        .success-message {
+            background: #d1fae5;
+            color: #059669;
+            padding: 1rem;
+            border-radius: 8px;
+            text-align: center;
+            font-weight: 600;
+        }
+    </style>
+</head>
+<body>
+    <div class="checkout-container">
+        <div class="checkout-header">
+            <h1>⚡ Checkout</h1>
+            <p>Pay with Card or Lightning</p>
+        </div>
+        
+        <div class="checkout-body">
+            <div class="payment-amount">
+                <div class="amount-display" id="amount-display">$25.00</div>
+                <div class="amount-description" id="payment-description">Lightning Payment</div>
+            </div>
+            
+            <div class="payment-methods" id="payment-methods">
+                <h3>Select Payment Method</h3>
+                
+                <div class="payment-option" onclick="selectPaymentMethod('card')">
+                    <div class="payment-icon">💳</div>
+                    <div class="payment-details">
+                        <div class="payment-title">Credit or Debit Card</div>
+                        <div class="payment-subtitle">Visa, Mastercard, Amex</div>
+                    </div>
+                    <div class="payment-badge">Popular</div>
+                </div>
+                
+                <div class="payment-option" onclick="selectPaymentMethod('strike')">
+                    <div class="payment-icon">⚡</div>
+                    <div class="payment-details">
+                        <div class="payment-title">Strike Payment</div>
+                        <div class="payment-subtitle">Instant fiat to Lightning conversion</div>
+                    </div>
+                </div>
+                
+                <div class="payment-option" onclick="selectPaymentMethod('lightning')">
+                    <div class="payment-icon">🔗</div>
+                    <div class="payment-details">
+                        <div class="payment-title">Lightning Network</div>
+                        <div class="payment-subtitle">Pay directly with Bitcoin Lightning</div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Card Payment Form -->
+            <div class="form-section" id="card-form">
+                <h3 style="margin-bottom: 1.5rem;">Card Information</h3>
+                
+                <div class="form-group">
+                    <label for="email">Email</label>
+                    <input type="email" id="email" placeholder="your@email.com" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="cardholder">Cardholder Name</label>
+                    <input type="text" id="cardholder" placeholder="John Doe" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="cardnumber">Card Number</label>
+                    <input type="text" id="cardnumber" placeholder="1234 5678 9012 3456" maxlength="19" required>
+                </div>
+                
+                <div class="card-inputs">
+                    <div class="form-group">
+                        <label for="expiry">Expiry Date</label>
+                        <input type="text" id="expiry" placeholder="MM/YY" maxlength="5" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="cvv">CVV</label>
+                        <input type="text" id="cvv" placeholder="123" maxlength="4" required>
+                    </div>
+                </div>
+                
+                <button class="pay-button" onclick="processCardPayment()">
+                    <span>Pay with Card</span>
+                </button>
+            </div>
+            
+            <!-- Strike Payment -->
+            <div class="form-section" id="strike-form">
+                <h3 style="margin-bottom: 1rem;">Strike Payment</h3>
+                <p style="color: #6b7280; margin-bottom: 1.5rem;">
+                    You'll be redirected to Strike to complete your payment securely.
+                </p>
+                
+                <button class="pay-button" onclick="processStrikePayment()">
+                    <span>Continue to Strike</span>
+                    <span>→</span>
+                </button>
+            </div>
+            
+            <!-- Lightning Payment -->
+            <div class="form-section" id="lightning-form">
+                <div class="lightning-invoice" id="lightning-invoice-display">
+                    <div class="spinner" style="margin: 2rem auto;"></div>
+                    <p>Generating Lightning invoice...</p>
+                </div>
+                
+                <button class="pay-button" onclick="generateLightningInvoice()">
+                    <span>Generate Lightning Invoice</span>
+                </button>
+            </div>
+            
+            <div class="security-info">
+                <span>🔒</span>
+                <span>Secure payment • Zero-KYB • Instant settlement</span>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        // Get amount from URL params
+        const params = new URLSearchParams(window.location.search);
+        const amount = parseFloat(params.get('amount')) || 25.00;
+        const description = params.get('description') || 'Lightning Payment';
+        
+        document.getElementById('amount-display').textContent = `$${amount.toFixed(2)}`;
+        document.getElementById('payment-description').textContent = description;
+        
+        let selectedMethod = null;
+        
+        function selectPaymentMethod(method) {
+            selectedMethod = method;
+            
+            // Update UI
+            document.querySelectorAll('.payment-option').forEach(el => {
+                el.classList.remove('selected');
+            });
+            event.currentTarget.classList.add('selected');
+            
+            // Hide all forms
+            document.querySelectorAll('.form-section').forEach(el => {
+                el.classList.remove('active');
+            });
+            
+            // Show selected form
+            document.getElementById(`${method}-form`).classList.add('active');
+            
+            // Auto-generate Lightning invoice
+            if (method === 'lightning') {
+                generateLightningInvoice();
+            }
+        }
+        
+        async function processCardPayment() {
+            const button = event.currentTarget;
+            button.disabled = true;
+            button.innerHTML = '<div class="spinner"></div>';
+            
+            // Simulate card processing
+            setTimeout(() => {
+                alert('Card payment processing coming soon! For now, use Strike or Lightning.');
+                button.disabled = false;
+                button.innerHTML = '<span>Pay with Card</span>';
+            }, 2000);
+        }
+        
+        async function processStrikePayment() {
+            const button = event.currentTarget;
+            button.disabled = true;
+            button.innerHTML = '<div class="spinner"></div>';
+            
+            try {
+                // Create Strike invoice
+                const response = await fetch('/api/strike/invoice', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ amount, description })
+                });
+                
+                const data = await response.json();
+                
+                if (data.paymentLink) {
+                    // Redirect to Strike payment page
+                    window.location.href = data.paymentLink;
+                } else {
+                    // Fallback to demo
+                    alert('Strike integration coming soon! Using Lightning demo instead.');
+                    selectPaymentMethod('lightning');
+                }
+            } catch (error) {
+                console.error('Strike payment error:', error);
+                alert('Strike payment unavailable. Please use Lightning payment.');
+                selectPaymentMethod('lightning');
+            }
+            
+            button.disabled = false;
+            button.innerHTML = '<span>Continue to Strike</span><span>→</span>';
+        }
+        
+        async function generateLightningInvoice() {
+            const invoiceDisplay = document.getElementById('lightning-invoice-display');
+            invoiceDisplay.innerHTML = '<div class="spinner" style="margin: 2rem auto;"></div><p>Generating Lightning invoice...</p>';
+            
+            try {
+                const response = await fetch('/api/lightning/invoice', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ amount, description })
+                });
+                
+                const data = await response.json();
+                
+                if (data.success) {
+                    const invoice = data.invoice;
+                    invoiceDisplay.innerHTML = `
+                        <h3>Scan with Lightning Wallet</h3>
+                        <div class="qr-code">
+                            <img src="${invoice.qrCode}" alt="Lightning QR Code" width="250" height="250">
+                        </div>
+                        <p style="color: #6b7280; margin-bottom: 0.5rem;">Or copy the payment request:</p>
+                        <div class="invoice-text" onclick="copyToClipboard('${invoice.paymentRequest}')" title="Click to copy">
+                            ${invoice.paymentRequest}
+                        </div>
+                        <p style="color: #6b7280; font-size: 0.875rem;">⏱️ Invoice expires in 60 minutes</p>
+                    `;
+                    
+                    // Start checking payment status
+                    checkPaymentStatus(invoice.id);
+                }
+            } catch (error) {
+                console.error('Lightning invoice error:', error);
+                invoiceDisplay.innerHTML = '<div class="error-message">Failed to generate invoice. Please try again.</div>';
+            }
+        }
+        
+        async function checkPaymentStatus(invoiceId) {
+            const interval = setInterval(async () => {
+                try {
+                    const response = await fetch(`/api/lightning/invoice/${invoiceId}`);
+                    const data = await response.json();
+                    
+                    if (data.status === 'paid') {
+                        clearInterval(interval);
+                        document.getElementById('lightning-invoice-display').innerHTML = `
+                            <div class="success-message">
+                                ✅ Payment Received Successfully!
+                            </div>
+                            <p style="margin-top: 1rem;">Thank you for your payment.</p>
+                        `;
+                    }
+                } catch (error) {
+                    console.error('Status check error:', error);
+                }
+            }, 2000);
+        }
+        
+        function copyToClipboard(text) {
+            navigator.clipboard.writeText(text).then(() => {
+                alert('Payment request copied to clipboard!');
+            });
+        }
+        
+        // Format card number input
+        document.getElementById('cardnumber')?.addEventListener('input', function(e) {
+            let value = e.target.value.replace(/\s/g, '');
+            let formattedValue = value.match(/.{1,4}/g)?.join(' ') || value;
+            e.target.value = formattedValue;
+        });
+        
+        // Format expiry input
+        document.getElementById('expiry')?.addEventListener('input', function(e) {
+            let value = e.target.value.replace(/\D/g, '');
+            if (value.length >= 2) {
+                value = value.slice(0, 2) + '/' + value.slice(2, 4);
+            }
+            e.target.value = value;
+        });
+    </script>
+</body>
+</html>

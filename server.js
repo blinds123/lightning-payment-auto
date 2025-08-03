@@ -99,6 +99,24 @@ app.get('/api/lightning/invoice/:id', (req, res) => {
   });
 });
 
+// Strike API endpoint (mock for now)
+app.post('/api/strike/invoice', async (req, res) => {
+  try {
+    const { amount, description } = req.body;
+    
+    // For demo, return a mock Strike payment link
+    res.json({
+      invoiceId: 'strike_' + crypto.randomBytes(8).toString('hex'),
+      amount: amount,
+      paymentLink: `https://strike.me/pay/demo_${crypto.randomBytes(8).toString('hex')}`,
+      description: description,
+      message: 'Strike integration requires API key. Using demo mode.'
+    });
+  } catch (error) {
+    res.status(500).json({ error: 'Strike payment unavailable' });
+  }
+});
+
 // Fallback to serve index.html for SPA routes
 app.get('*', (req, res) => {
   res.sendFile(path.join(__dirname, 'public', 'index.html'));
