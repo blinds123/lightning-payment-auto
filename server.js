@@ -4,6 +4,10 @@ const path = require('path');
 const crypto = require('crypto');
 require('dotenv').config();
 
+// Strike API client
+const StrikeClient = require('./strike-client');
+const strike = process.env.STRIKE_API_KEY ? new StrikeClient(process.env.STRIKE_API_KEY) : null;
+
 const app = express();
 const PORT = process.env.PORT || 8080;
 
@@ -99,21 +103,122 @@ app.get('/api/lightning/invoice/:id', (req, res) => {
   });
 });
 
-// Strike API endpoint (mock for now)
+// Strike API endpoint - Real integration
 app.post('/api/strike/invoice', async (req, res) => {
   try {
     const { amount, description } = req.body;
     
-    // For demo, return a mock Strike payment link
+    // Validate amount
+    if (!amount || amount < 20 || amount > 100) {
+      return res.status(400).json({ 
+        error: 'Amount must be between $20 and $100' 
+      });
+    }
+    
+    if (!strike) {
+      // Demo mode if no API key
+      return res.json({
+        invoiceId: 'strike_demo_' + crypto.randomBytes(8).toString('hex'),
+        amount: amount,
+        paymentUrl: `https://strike.me/pay/demo_${crypto.randomBytes(8).toString('hex')}`,
+        description: description,
+        demo: true,
+        message: 'Strike API key not configured. Using demo mode.'
+      });
+    }
+    
+    // Create real Strike invoice
+    const invoice = await strike.createInvoice(amount, description);
+    
+    // Store in our system for tracking
+    invoices.set(invoice.invoiceId, {
+      ...invoice,
+      provider: 'strike',
+      createdAt: new Date().toISOString()
+    });
+    
     res.json({
-      invoiceId: 'strike_' + crypto.randomBytes(8).toString('hex'),
+      success: true,
+      invoiceId: invoice.invoiceId,
+      paymentUrl: invoice.paymentUrl,
       amount: amount,
-      paymentLink: `https://strike.me/pay/demo_${crypto.randomBytes(8).toString('hex')}`,
-      description: description,
-      message: 'Strike integration requires API key. Using demo mode.'
+      description: description
     });
   } catch (error) {
-    res.status(500).json({ error: 'Strike payment unavailable' });
+    console.error('Strike invoice creation error:', error);
+    res.status(500).json({ 
+      error: 'Failed to create Strike invoice',
+      message: error.message 
+    });
+  }
+});
+
+// Get Strike invoice status
+app.get('/api/strike/invoice/:id', async (req, res) => {
+  try {
+    const { id } = req.params;
+    
+    if (!strike) {
+      const localInvoice = invoices.get(id);
+      if (localInvoice && localInvoice.demo) {
+        return res.json({
+          invoiceId: id,
+          status: 'paid', // Demo always shows as paid
+          demo: true
+        });
+      }
+      return res.status(400).json({ error: 'Strike not configured' });
+    }
+    
+    const invoice = await strike.getInvoice(id);
+    res.json({
+      invoiceId: invoice.invoiceId,
+      status: invoice.state,
+      amount: invoice.amount,
+      paid: invoice.state === 'COMPLETED'
+    });
+  } catch (error) {
+    console.error('Strike invoice fetch error:', error);
+    res.status(500).json({ error: 'Failed to fetch invoice status' });
+  }
+});
+
+// Webhook endpoint for Strike
+app.post('/api/webhooks/strike', async (req, res) => {
+  try {
+    const signature = req.headers['strike-signature'];
+    const payload = JSON.stringify(req.body);
+    
+    if (strike && process.env.STRIKE_WEBHOOK_SECRET) {
+      const isValid = strike.verifyWebhookSignature(
+        payload,
+        signature,
+        process.env.STRIKE_WEBHOOK_SECRET
+      );
+      
+      if (!isValid) {
+        return res.status(401).json({ error: 'Invalid signature' });
+      }
+    }
+    
+    const event = req.body;
+    console.log('Strike webhook event:', event.eventType);
+    
+    // Handle different event types
+    switch (event.eventType) {
+      case 'invoice.paid':
+        const invoice = invoices.get(event.data.invoiceId);
+        if (invoice) {
+          invoice.status = 'paid';
+          invoice.paidAt = new Date().toISOString();
+        }
+        break;
+    }
+    
+    res.json({ received: true });
+  } catch (error) {
+    console.error('Webhook processing error:', error);
+    res.status(500).json({ error: 'Webhook processing failed' });
   }
 });
 

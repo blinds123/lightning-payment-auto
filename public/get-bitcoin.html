@@ -1,0 +1,492 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Get Bitcoin - Payment Options</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: #0a0e27;
+            color: #fff;
+            min-height: 100vh;
+            padding: 2rem;
+        }
+        
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        
+        .header {
+            text-align: center;
+            margin-bottom: 3rem;
+        }
+        
+        .header h1 {
+            font-size: 2.5rem;
+            background: linear-gradient(135deg, #f7931a 0%, #ffb84d 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 1rem;
+        }
+        
+        .header p {
+            font-size: 1.25rem;
+            color: #8892b0;
+        }
+        
+        .options-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 3rem;
+        }
+        
+        .option-card {
+            background: #1a1f3a;
+            border-radius: 16px;
+            padding: 2rem;
+            border: 2px solid transparent;
+            transition: all 0.3s;
+        }
+        
+        .option-card:hover {
+            border-color: #f7931a;
+            transform: translateY(-4px);
+            box-shadow: 0 12px 24px rgba(247, 147, 26, 0.2);
+        }
+        
+        .option-header {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-bottom: 1rem;
+        }
+        
+        .option-icon {
+            width: 60px;
+            height: 60px;
+            background: #0a0e27;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2rem;
+        }
+        
+        .option-title h3 {
+            font-size: 1.5rem;
+            margin-bottom: 0.25rem;
+        }
+        
+        .kyc-badge {
+            display: inline-block;
+            padding: 0.25rem 0.75rem;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 600;
+        }
+        
+        .kyc-none {
+            background: #10b981;
+            color: white;
+        }
+        
+        .kyc-required {
+            background: #f59e0b;
+            color: white;
+        }
+        
+        .kyc-minimal {
+            background: #3b82f6;
+            color: white;
+        }
+        
+        .option-features {
+            margin: 1.5rem 0;
+        }
+        
+        .feature {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            margin-bottom: 0.5rem;
+            color: #8892b0;
+        }
+        
+        .feature-icon {
+            color: #64ffda;
+        }
+        
+        .cta-button {
+            display: block;
+            width: 100%;
+            padding: 1rem;
+            background: linear-gradient(135deg, #f7931a 0%, #ffb84d 100%);
+            border: none;
+            border-radius: 8px;
+            color: #0a0e27;
+            font-size: 1.125rem;
+            font-weight: 600;
+            text-decoration: none;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        
+        .cta-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 16px rgba(247, 147, 26, 0.3);
+        }
+        
+        .instructions {
+            background: #1a1f3a;
+            border-radius: 16px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+        }
+        
+        .instructions h2 {
+            margin-bottom: 1rem;
+            color: #f7931a;
+        }
+        
+        .steps {
+            list-style: none;
+            counter-reset: step-counter;
+        }
+        
+        .steps li {
+            counter-increment: step-counter;
+            margin-bottom: 1rem;
+            padding-left: 2.5rem;
+            position: relative;
+        }
+        
+        .steps li::before {
+            content: counter(step-counter);
+            position: absolute;
+            left: 0;
+            top: 0;
+            width: 2rem;
+            height: 2rem;
+            background: #f7931a;
+            color: #0a0e27;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+        }
+        
+        .payment-info {
+            background: #0a0e27;
+            border-radius: 12px;
+            padding: 1.5rem;
+            margin-top: 1.5rem;
+            text-align: center;
+        }
+        
+        .amount {
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: #64ffda;
+            margin-bottom: 0.5rem;
+        }
+        
+        .invoice-id {
+            color: #8892b0;
+            font-family: monospace;
+            font-size: 0.875rem;
+        }
+        
+        .back-button {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: #8892b0;
+            text-decoration: none;
+            margin-bottom: 2rem;
+            transition: color 0.2s;
+        }
+        
+        .back-button:hover {
+            color: #f7931a;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <a href="javascript:history.back()" class="back-button">
+            ← Back to checkout
+        </a>
+        
+        <div class="header">
+            <h1>Get Bitcoin to Complete Payment</h1>
+            <p>Choose how you'd like to acquire Bitcoin for your Lightning payment</p>
+        </div>
+        
+        <div class="instructions">
+            <h2>How This Works</h2>
+            <ol class="steps">
+                <li>Choose a service below to get Bitcoin</li>
+                <li>Purchase at least <span id="amount-needed">$25</span> worth of Bitcoin</li>
+                <li>Return here and pay with Lightning</li>
+                <li>Your payment is processed instantly with zero fees</li>
+            </ol>
+            
+            <div class="payment-info">
+                <div class="amount" id="payment-amount">$25.00</div>
+                <div class="invoice-id">Payment ID: <span id="payment-id"></span></div>
+            </div>
+        </div>
+        
+        <div class="options-grid">
+            <!-- Cash App Option -->
+            <div class="option-card">
+                <div class="option-header">
+                    <div class="option-icon">💵</div>
+                    <div class="option-title">
+                        <h3>Cash App</h3>
+                        <span class="kyc-badge kyc-required">KYC Required</span>
+                    </div>
+                </div>
+                
+                <div class="option-features">
+                    <div class="feature">
+                        <span class="feature-icon">✓</span>
+                        <span>Instant Lightning withdrawals</span>
+                    </div>
+                    <div class="feature">
+                        <span class="feature-icon">✓</span>
+                        <span>Buy with debit card or bank</span>
+                    </div>
+                    <div class="feature">
+                        <span class="feature-icon">✓</span>
+                        <span>Low fees (~2.5%)</span>
+                    </div>
+                    <div class="feature">
+                        <span class="feature-icon">✓</span>
+                        <span>Available in US & UK</span>
+                    </div>
+                </div>
+                
+                <a href="https://cash.app/app/LWNMNLB" class="cta-button" target="_blank">
+                    Open Cash App →
+                </a>
+            </div>
+            
+            <!-- Strike Option -->
+            <div class="option-card">
+                <div class="option-header">
+                    <div class="option-icon">⚡</div>
+                    <div class="option-title">
+                        <h3>Strike</h3>
+                        <span class="kyc-badge kyc-required">KYC Required</span>
+                    </div>
+                </div>
+                
+                <div class="option-features">
+                    <div class="feature">
+                        <span class="feature-icon">✓</span>
+                        <span>Built for Lightning payments</span>
+                    </div>
+                    <div class="feature">
+                        <span class="feature-icon">✓</span>
+                        <span>Zero fees on Lightning</span>
+                    </div>
+                    <div class="feature">
+                        <span class="feature-icon">✓</span>
+                        <span>Instant bank transfers</span>
+                    </div>
+                    <div class="feature">
+                        <span class="feature-icon">✓</span>
+                        <span>Best for recurring payments</span>
+                    </div>
+                </div>
+                
+                <a href="https://strike.me" class="cta-button" target="_blank">
+                    Open Strike →
+                </a>
+            </div>
+            
+            <!-- RoboSats Option -->
+            <div class="option-card">
+                <div class="option-header">
+                    <div class="option-icon">🤖</div>
+                    <div class="option-title">
+                        <h3>RoboSats</h3>
+                        <span class="kyc-badge kyc-none">No KYC</span>
+                    </div>
+                </div>
+                
+                <div class="option-features">
+                    <div class="feature">
+                        <span class="feature-icon">✓</span>
+                        <span>Complete privacy</span>
+                    </div>
+                    <div class="feature">
+                        <span class="feature-icon">✓</span>
+                        <span>P2P Lightning trades</span>
+                    </div>
+                    <div class="feature">
+                        <span class="feature-icon">✓</span>
+                        <span>Multiple payment methods</span>
+                    </div>
+                    <div class="feature">
+                        <span class="feature-icon">✓</span>
+                        <span>Tor-friendly</span>
+                    </div>
+                </div>
+                
+                <a href="https://learn.robosats.com" class="cta-button" target="_blank">
+                    Learn More →
+                </a>
+            </div>
+            
+            <!-- Bitcoin ATM Option -->
+            <div class="option-card">
+                <div class="option-header">
+                    <div class="option-icon">🏧</div>
+                    <div class="option-title">
+                        <h3>Bitcoin ATM</h3>
+                        <span class="kyc-badge kyc-minimal">Minimal KYC</span>
+                    </div>
+                </div>
+                
+                <div class="option-features">
+                    <div class="feature">
+                        <span class="feature-icon">✓</span>
+                        <span>Cash to Bitcoin instantly</span>
+                    </div>
+                    <div class="feature">
+                        <span class="feature-icon">✓</span>
+                        <span>No bank account needed</span>
+                    </div>
+                    <div class="feature">
+                        <span class="feature-icon">✓</span>
+                        <span>Often no ID under $500</span>
+                    </div>
+                    <div class="feature">
+                        <span class="feature-icon">⚠</span>
+                        <span>Higher fees (8-15%)</span>
+                    </div>
+                </div>
+                
+                <a href="https://coinatmradar.com" class="cta-button" target="_blank">
+                    Find ATM Near Me →
+                </a>
+            </div>
+            
+            <!-- Azteco Voucher Option -->
+            <div class="option-card">
+                <div class="option-header">
+                    <div class="option-icon">🎫</div>
+                    <div class="option-title">
+                        <h3>Azteco Voucher</h3>
+                        <span class="kyc-badge kyc-none">No KYC</span>
+                    </div>
+                </div>
+                
+                <div class="option-features">
+                    <div class="feature">
+                        <span class="feature-icon">✓</span>
+                        <span>Buy vouchers with cash</span>
+                    </div>
+                    <div class="feature">
+                        <span class="feature-icon">✓</span>
+                        <span>Available at many stores</span>
+                    </div>
+                    <div class="feature">
+                        <span class="feature-icon">✓</span>
+                        <span>Redeem to Lightning</span>
+                    </div>
+                    <div class="feature">
+                        <span class="feature-icon">✓</span>
+                        <span>No personal info required</span>
+                    </div>
+                </div>
+                
+                <a href="https://azte.co" class="cta-button" target="_blank">
+                    Find Store →
+                </a>
+            </div>
+            
+            <!-- Already Have Bitcoin Option -->
+            <div class="option-card">
+                <div class="option-header">
+                    <div class="option-icon">₿</div>
+                    <div class="option-title">
+                        <h3>Already Have Bitcoin?</h3>
+                        <span class="kyc-badge kyc-none">Ready to Pay</span>
+                    </div>
+                </div>
+                
+                <div class="option-features">
+                    <div class="feature">
+                        <span class="feature-icon">✓</span>
+                        <span>Pay instantly with Lightning</span>
+                    </div>
+                    <div class="feature">
+                        <span class="feature-icon">✓</span>
+                        <span>No fees or delays</span>
+                    </div>
+                    <div class="feature">
+                        <span class="feature-icon">✓</span>
+                        <span>Complete privacy</span>
+                    </div>
+                    <div class="feature">
+                        <span class="feature-icon">✓</span>
+                        <span>Instant confirmation</span>
+                    </div>
+                </div>
+                
+                <button class="cta-button" onclick="payWithLightning()">
+                    Pay Now with Lightning →
+                </button>
+            </div>
+        </div>
+        
+        <div class="instructions">
+            <h2>Why Bitcoin Lightning?</h2>
+            <p style="color: #8892b0; line-height: 1.6;">
+                Lightning Network enables instant, nearly free Bitcoin payments without requiring 
+                personal information. Once you have Bitcoin in a Lightning wallet, you can make 
+                payments anywhere in the world instantly. It's like digital cash - private, fast, 
+                and borderless.
+            </p>
+        </div>
+    </div>
+    
+    <script>
+        // Get payment details from URL
+        const params = new URLSearchParams(window.location.search);
+        const amount = params.get('amount') || '25.00';
+        const paymentId = params.get('id') || 'PAY-' + Date.now();
+        
+        // Update page with payment details
+        document.getElementById('amount-needed').textContent = `$${amount}`;
+        document.getElementById('payment-amount').textContent = `$${amount}`;
+        document.getElementById('payment-id').textContent = paymentId;
+        
+        // Store payment info for when user returns
+        localStorage.setItem('pendingPayment', JSON.stringify({
+            amount: amount,
+            paymentId: paymentId,
+            created: new Date().toISOString()
+        }));
+        
+        function payWithLightning() {
+            // Redirect back to checkout with Lightning pre-selected
+            window.location.href = `/checkout.html?amount=${amount}&method=lightning`;
+        }
+    </script>
+</body>
+</html>

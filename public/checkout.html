@@ -461,17 +461,37 @@
                 
                 const data = await response.json();
                 
-                if (data.paymentLink) {
-                    // Redirect to Strike payment page
-                    window.location.href = data.paymentLink;
+                if (data.paymentUrl) {
+                    // Store invoice ID for status checking
+                    localStorage.setItem('strikeInvoiceId', data.invoiceId);
+                    localStorage.setItem('paymentAmount', amount);
+                    
+                    // Redirect to Strike's hosted payment page
+                    window.location.href = data.paymentUrl;
+                } else if (data.demo) {
+                    // Demo mode - show message
+                    const strikeForm = document.getElementById('strike-form');
+                    strikeForm.innerHTML = `
+                        <div class="demo-notice">
+                            <h3>⚠️ Demo Mode</h3>
+                            <p>Strike API key not configured. In production, customers would be redirected to Strike's secure payment page where they can pay with:</p>
+                            <ul style="text-align: left; margin: 1rem auto; max-width: 300px;">
+                                <li>✓ Debit card</li>
+                                <li>✓ Bank account (ACH)</li>
+                                <li>✓ Existing Strike balance</li>
+                            </ul>
+                            <p>Strike automatically converts USD to Lightning and sends it to your wallet.</p>
+                            <button class="pay-button" onclick="selectPaymentMethod('lightning')">
+                                Try Lightning Demo Instead
+                            </button>
+                        </div>
+                    `;
                 } else {
-                    // Fallback to demo
-                    alert('Strike integration coming soon! Using Lightning demo instead.');
-                    selectPaymentMethod('lightning');
+                    throw new Error(data.error || 'Strike payment failed');
                 }
             } catch (error) {
                 console.error('Strike payment error:', error);
-                alert('Strike payment unavailable. Please use Lightning payment.');
+                alert('Strike payment unavailable. Please try Lightning payment instead.');
                 selectPaymentMethod('lightning');
             }
             

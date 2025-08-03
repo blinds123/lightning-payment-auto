@@ -1,28 +1,30 @@
-# Lightning Payment System - Zero KYB ⚡
+# Lightning Payment System with Strike Integration ⚡
 
-A production-ready Lightning Network payment system that accepts $20-100 payments with **ABSOLUTE ZERO KYB** requirements using BTCPay Server.
+A production-ready payment system that accepts $20-100 payments with **ZERO KYB** for merchants using Strike API for fiat-to-Lightning conversion.
 
-## 🛡️ ZERO-KYB GUARANTEE
+## 🛡️ NO-KYB FOR MERCHANTS
 
-- ❌ **NO identity verification for merchants**
-- ❌ **NO customer account creation required**
-- ❌ **NO app downloads needed**
-- ❌ **NO ID uploads or selfies**
-- ✅ **Complete financial sovereignty**
-- ✅ **Anonymous customer payments**
-- ✅ **Self-hosted infrastructure**
+- ✅ **Strike API** - No KYB required for merchants receiving Bitcoin
+- ✅ **Fiat payments** - Customers pay with card/bank via Strike
+- ✅ **Instant conversion** - USD automatically converted to Lightning
+- ✅ **Zero crypto knowledge** - Customers don't need to know Bitcoin
+- ✅ **Self-custody** - You receive Bitcoin directly to your wallet
+- ❌ **No payment processor fees** - Only Strike's minimal conversion fee
+- ❌ **No chargebacks** - Lightning payments are final
 
 ## 🚀 Features
 
-- ⚡ Lightning Network payments via BTCPay Server (NOT Strike)
-- 🔒 Zero KYB/KYC requirements (confirmed)
-- 💰 $20-100 payment range enforcement
-- 🛡️ Production security (Helmet, CORS, rate limiting)
-- 📊 Supabase database integration
-- 🔄 Automated deployment via GitHub Actions
-- 🎯 RESTful API with comprehensive error handling
-- 📱 QR code payments with any Lightning wallet
-- 🌍 Global accessibility without restrictions
+- 💳 **Fiat Payments** - Accept credit cards, debit cards, and bank transfers
+- ⚡ **Strike Integration** - Automatic fiat-to-Lightning conversion
+- 🔒 **No KYB for Merchants** - Receive Bitcoin without business verification
+- 💰 **$20-100 payment range** - Perfect for digital products and services
+- 🎯 **Three payment options**:
+  - Strike (recommended) - Fiat to Lightning
+  - Direct Lightning - For crypto-native users
+  - Get Bitcoin - Educational resources
+- 🛡️ **Production security** - Helmet, CORS, rate limiting
+- 🔄 **DigitalOcean App Platform** - Automated deployment
+- 📱 **Mobile responsive** - Works on all devices
 
 ## 🏃 Quick Start
 
@@ -68,18 +70,34 @@ npm start
 
 ## 📡 API Endpoints
 
-### Create Lightning Invoice
+### Create Strike Invoice (Fiat → Lightning)
+```bash
+POST /api/strike/invoice
+{
+  "amount": 25.00,
+  "description": "Product purchase"
+}
+
+# Response:
+{
+  "invoiceId": "strike_abc123",
+  "paymentUrl": "https://strike.me/pay/abc123",
+  "amount": 25.00
+}
+```
+
+### Create Lightning Invoice (Direct)
 ```bash
 POST /api/lightning/invoice
 {
   "amount": 25.00,
-  "description": "Product purchase",
-  "customer_email": "customer@example.com"
+  "description": "Product purchase"
 }
 ```
 
 ### Check Payment Status
 ```bash
+GET /api/strike/invoice/:id
 GET /api/lightning/invoice/:id
 ```
 
@@ -92,10 +110,12 @@ GET /health
 
 ### Environment Variables
 
-- `SUPABASE_URL` - Your Supabase project URL
-- `SUPABASE_ANON_KEY` - Supabase anonymous key
-- `STRIKE_API_KEY` - Strike API key (for Lightning payments)
+- `STRIKE_API_KEY` - Your Strike API key (get from strike.me/developer)
+- `STRIKE_WEBHOOK_SECRET` - Strike webhook secret for payment confirmations
+- `SUPABASE_URL` - Your Supabase project URL (optional)
+- `SUPABASE_ANON_KEY` - Supabase anonymous key (optional)
 - `PORT` - Server port (default: 3000)
+- `PUBLIC_URL` - Your app's public URL for webhooks
 
 ### Database Schema
 
@@ -113,21 +133,40 @@ The system automatically creates:
 
 ## 🚀 Deployment Options
 
-### Option 1: Supabase + GitHub (Recommended)
-- Push to GitHub triggers automatic deployment
-- Supabase handles database and edge functions
-- Zero configuration needed
+### DigitalOcean App Platform (Recommended)
 
-### Option 2: DigitalOcean
-- Use the provided GitHub Actions workflow
-- Deploys to your droplet automatically
-- Includes PM2 for process management
-
-### Option 3: Docker
+1. Fork this repository
+2. Create app in DigitalOcean:
 ```bash
-docker build -t lightning-payment .
-docker run -p 3000:3000 --env-file .env lightning-payment
+doctl apps create --spec .do/app.yaml
 ```
+3. Set environment variables:
+   - `STRIKE_API_KEY`
+   - `STRIKE_WEBHOOK_SECRET`
+4. Deploy automatically from GitHub
+
+### Manual Deployment
+
+1. Clone and configure:
+```bash
+git clone <your-repo>
+cd lightning-payment-auto
+npm install
+cp .env.example .env
+# Edit .env with your Strike API credentials
+```
+
+2. Start the server:
+```bash
+npm start
+```
+
+### Strike API Setup
+
+1. Sign up at [strike.me/developer](https://strike.me/developer)
+2. Create API key (no KYB required for receiving)
+3. Configure webhook URL: `https://your-app.com/api/webhooks/strike`
+4. Add credentials to environment
 
 ## 📊 Monitoring
 
@@ -138,11 +177,27 @@ docker run -p 3000:3000 --env-file .env lightning-payment
 
 ## 💳 Payment Flow
 
-1. Customer requests invoice via API
-2. System generates Lightning invoice
-3. Customer pays via Lightning wallet
-4. System verifies payment
-5. Order fulfilled automatically
+### Option 1: Strike Payment (Recommended)
+1. Customer selects Strike payment at checkout
+2. Redirected to Strike's secure payment page
+3. Customer pays with:
+   - Credit/debit card
+   - Bank account (ACH)
+   - Existing Strike balance
+4. Strike converts USD to Bitcoin Lightning
+5. You receive Bitcoin instantly to your wallet
+6. Customer redirected to success page
+
+### Option 2: Direct Lightning
+1. Customer generates Lightning invoice
+2. Scans QR code with any Lightning wallet
+3. Pays directly with Bitcoin
+4. Instant confirmation
+
+### Option 3: Get Bitcoin
+1. Customer learns how to acquire Bitcoin
+2. Various no-KYC options presented
+3. Returns to pay with Lightning
 
 ## 🤝 Contributing
 
