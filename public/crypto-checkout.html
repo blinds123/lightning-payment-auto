@@ -1,0 +1,492 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <title>Crypto Payment - $15 USD to MATIC</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: #0a0e27;
+            color: #fff;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            -webkit-font-smoothing: antialiased;
+        }
+        
+        .container {
+            flex: 1;
+            padding: 20px;
+            max-width: 450px;
+            margin: 0 auto;
+            width: 100%;
+        }
+        
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        
+        .logo {
+            width: 60px;
+            height: 60px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-radius: 16px;
+            margin: 0 auto 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 28px;
+        }
+        
+        h1 {
+            font-size: 24px;
+            font-weight: 700;
+            margin-bottom: 8px;
+        }
+        
+        .subtitle {
+            color: #8892b0;
+            font-size: 16px;
+        }
+        
+        .payment-card {
+            background: #1a1f3a;
+            border-radius: 20px;
+            padding: 24px;
+            margin-bottom: 20px;
+        }
+        
+        .amount-section {
+            text-align: center;
+            margin-bottom: 24px;
+        }
+        
+        .amount-label {
+            color: #8892b0;
+            font-size: 14px;
+            margin-bottom: 8px;
+        }
+        
+        .amount-display {
+            font-size: 48px;
+            font-weight: 700;
+            color: #64ffda;
+            margin-bottom: 4px;
+        }
+        
+        .conversion-info {
+            color: #8892b0;
+            font-size: 14px;
+        }
+        
+        .destination-section {
+            margin-bottom: 24px;
+        }
+        
+        .section-title {
+            font-size: 14px;
+            color: #8892b0;
+            margin-bottom: 12px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        
+        .address-box {
+            background: #0a0e27;
+            border: 1px solid #2a3354;
+            border-radius: 12px;
+            padding: 16px;
+            word-break: break-all;
+            font-family: monospace;
+            font-size: 12px;
+            color: #64ffda;
+        }
+        
+        .chain-info {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-top: 12px;
+        }
+        
+        .chain-badge {
+            background: #764ba2;
+            color: white;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+        
+        .payment-methods {
+            margin-bottom: 24px;
+        }
+        
+        .method-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 12px;
+            margin-top: 12px;
+        }
+        
+        .method-badge {
+            background: #0a0e27;
+            border: 1px solid #2a3354;
+            border-radius: 8px;
+            padding: 12px;
+            text-align: center;
+            font-size: 12px;
+            color: #8892b0;
+        }
+        
+        .pay-button {
+            width: 100%;
+            padding: 18px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border: none;
+            border-radius: 12px;
+            color: white;
+            font-size: 18px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            text-decoration: none;
+            -webkit-appearance: none;
+        }
+        
+        .pay-button:active {
+            transform: scale(0.98);
+        }
+        
+        .security-info {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            margin-top: 16px;
+            color: #8892b0;
+            font-size: 12px;
+        }
+        
+        .info-card {
+            background: #0f1322;
+            border: 1px solid #1a1f3a;
+            border-radius: 12px;
+            padding: 16px;
+            margin-bottom: 20px;
+        }
+        
+        .info-card h3 {
+            font-size: 14px;
+            margin-bottom: 8px;
+            color: #64ffda;
+        }
+        
+        .info-card p {
+            font-size: 12px;
+            color: #8892b0;
+            line-height: 1.5;
+        }
+        
+        .steps {
+            counter-reset: step-counter;
+        }
+        
+        .step {
+            counter-increment: step-counter;
+            margin-bottom: 12px;
+            padding-left: 28px;
+            position: relative;
+            font-size: 12px;
+            color: #8892b0;
+            line-height: 1.5;
+        }
+        
+        .step::before {
+            content: counter(step-counter);
+            position: absolute;
+            left: 0;
+            top: 0;
+            width: 20px;
+            height: 20px;
+            background: #764ba2;
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 10px;
+            font-weight: 600;
+        }
+        
+        /* Mobile optimizations */
+        @media (max-width: 480px) {
+            .container {
+                padding: 16px;
+            }
+            
+            .amount-display {
+                font-size: 40px;
+            }
+            
+            .method-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+        
+        /* Loading state */
+        .loading {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(10, 14, 39, 0.95);
+            z-index: 9999;
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
+        }
+        
+        .loading.active {
+            display: flex;
+        }
+        
+        .spinner {
+            width: 50px;
+            height: 50px;
+            border: 3px solid #1a1f3a;
+            border-top-color: #764ba2;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin-bottom: 16px;
+        }
+        
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+        
+        .partner-badge {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            margin-top: 20px;
+            opacity: 0.5;
+            font-size: 12px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <div class="logo">💎</div>
+            <h1>Crypto Payment</h1>
+            <p class="subtitle">Fast & Secure Fiat to Crypto</p>
+        </div>
+        
+        <div class="payment-card">
+            <div class="amount-section">
+                <div class="amount-label">You Pay</div>
+                <div class="amount-display">$15</div>
+                <div class="conversion-info">≈ 10-12 MATIC (Polygon)</div>
+            </div>
+            
+            <div class="destination-section">
+                <div class="section-title">Receiving Address</div>
+                <div class="address-box">
+                    0xE5173e7c3089bD89cd1341b637b8e1951745ED5C
+                </div>
+                <div class="chain-info">
+                    <span class="chain-badge">Polygon Network</span>
+                    <span style="color: #8892b0; font-size: 12px;">MATIC</span>
+                </div>
+            </div>
+            
+            <div class="payment-methods">
+                <div class="section-title">Payment Methods</div>
+                <div class="method-grid">
+                    <div class="method-badge">💳 Visa</div>
+                    <div class="method-badge">💳 Mastercard</div>
+                    <div class="method-badge">🏦 Bank Transfer</div>
+                    <div class="method-badge">📱 Apple Pay</div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="info-card">
+            <h3>How it works</h3>
+            <div class="steps">
+                <div class="step">Click "Pay with Card" below</div>
+                <div class="step">Enter your card details on SimpleSwap</div>
+                <div class="step">Payment processed by Mercuryo (licensed provider)</div>
+                <div class="step">MATIC sent instantly to the address above</div>
+            </div>
+        </div>
+        
+        <a href="#" class="pay-button" id="payButton">
+            <span>Pay with Card</span>
+            <span>→</span>
+        </a>
+        
+        <div class="security-info">
+            <span>🔒</span>
+            <span>Secure payment • No KYB required • Instant delivery</span>
+        </div>
+        
+        <div class="partner-badge">
+            <span>Powered by SimpleSwap × Mercuryo</span>
+        </div>
+    </div>
+    
+    <div class="loading" id="loadingScreen">
+        <div class="spinner"></div>
+        <p style="color: #8892b0;">Redirecting to payment provider...</p>
+    </div>
+    
+    <script>
+        // Configuration
+        const config = {
+            amount: 15,
+            fromCurrency: 'USD',
+            toCurrency: 'MATIC',
+            toNetwork: 'polygon',
+            destinationAddress: '0xE5173e7c3089bD89cd1341b637b8e1951745ED5C',
+            referralId: 'lightning-payment', // Your referral ID
+            source: 'crypto-checkout'
+        };
+        
+        // Generate SimpleSwap URL with parameters
+        function generatePaymentUrl() {
+            // Use redirect page for better control
+            const redirectUrl = '/mercuryo-redirect.html';
+            
+            // Build query parameters for our redirect page
+            const params = new URLSearchParams({
+                amount: config.amount,
+                from: config.fromCurrency,
+                to: config.toCurrency,
+                network: config.toNetwork,
+                address: config.destinationAddress,
+                ref: config.referralId
+            });
+            
+            return `${redirectUrl}?${params.toString()}`;
+        }
+        
+        // Direct SimpleSwap URL (fallback)
+        function generateDirectUrl() {
+            const baseUrl = 'https://simpleswap.io/buy-crypto';
+            const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
+            
+            // Build optimized parameters
+            const params = new URLSearchParams({
+                from: config.fromCurrency.toLowerCase(),
+                to: `${config.toCurrency.toLowerCase()}-${config.toNetwork}`,
+                amount: config.amount,
+                address: config.destinationAddress,
+                // Force Mercuryo
+                provider: 'mercuryo',
+                selectedProvider: 'mercuryo',
+                defaultProvider: 'mercuryo',
+                // Mobile overrides
+                mobile: isMobile ? 'false' : 'true',
+                desktop: 'true',
+                forceDesktop: 'true',
+                // Tracking
+                ref: config.referralId,
+                source: 'mobile-optimized',
+                t: Date.now()
+            });
+            
+            return `${baseUrl}?${params.toString()}`;
+        }
+        
+        // Detect device type
+        function detectDevice() {
+            const userAgent = navigator.userAgent.toLowerCase();
+            if (/iphone|ipod/.test(userAgent)) return 'iphone';
+            if (/ipad/.test(userAgent)) return 'ipad';
+            if (/android/.test(userAgent)) return 'android';
+            return 'desktop';
+        }
+        
+        // Handle payment button click
+        document.getElementById('payButton').addEventListener('click', function(e) {
+            e.preventDefault();
+            
+            // Show loading screen
+            document.getElementById('loadingScreen').classList.add('active');
+            
+            const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
+            
+            // Use redirect page for mobile to ensure Mercuryo
+            const paymentUrl = isMobile ? generatePaymentUrl() : generateDirectUrl();
+            
+            // Log for debugging
+            console.log('Payment URL:', paymentUrl);
+            console.log('Device:', detectDevice());
+            console.log('Is Mobile:', isMobile);
+            
+            // Store payment info in localStorage for tracking
+            localStorage.setItem('pendingPayment', JSON.stringify({
+                amount: config.amount,
+                currency: config.toCurrency,
+                address: config.destinationAddress,
+                timestamp: new Date().toISOString(),
+                referenceId: `PAY-${Date.now()}`,
+                device: detectDevice(),
+                isMobile: isMobile
+            }));
+            
+            // Redirect strategy based on device
+            if (isMobile) {
+                // Use location.replace for mobile to prevent back button issues
+                setTimeout(() => {
+                    window.location.replace(paymentUrl);
+                }, 500);
+            } else {
+                // Normal redirect for desktop
+                setTimeout(() => {
+                    window.location.href = paymentUrl;
+                }, 1000);
+            }
+        });
+        
+        // Log page view
+        console.log('Crypto checkout loaded', {
+            device: detectDevice(),
+            viewport: `${window.innerWidth}x${window.innerHeight}`,
+            timestamp: new Date().toISOString()
+        });
+        
+        // Handle back button / page visibility
+        document.addEventListener('visibilitychange', function() {
+            if (!document.hidden) {
+                // User came back to the page
+                const pendingPayment = localStorage.getItem('pendingPayment');
+                if (pendingPayment) {
+                    console.log('User returned from payment page');
+                    // Could check payment status here
+                }
+            }
+        });
+    </script>
+</body>
+</html>

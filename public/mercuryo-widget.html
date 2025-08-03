@@ -1,0 +1,393 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <title>Secure Crypto Payment - Mercuryo</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: #0a0e27;
+            color: #fff;
+            min-height: 100vh;
+            overflow: hidden;
+        }
+        
+        .header {
+            background: #1a1f3a;
+            padding: 16px 20px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 1000;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+        }
+        
+        .header h1 {
+            font-size: 18px;
+            font-weight: 600;
+        }
+        
+        .back-button {
+            padding: 8px 16px;
+            background: #764ba2;
+            border: none;
+            border-radius: 8px;
+            color: white;
+            font-size: 14px;
+            cursor: pointer;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+        }
+        
+        .widget-container {
+            position: fixed;
+            top: 60px;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: white;
+        }
+        
+        #mercuryo-widget {
+            width: 100%;
+            height: 100%;
+            border: none;
+        }
+        
+        .loading {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            text-align: center;
+            color: #333;
+        }
+        
+        .spinner {
+            width: 50px;
+            height: 50px;
+            border: 3px solid #f3f3f3;
+            border-top: 3px solid #764ba2;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 16px;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        .error {
+            background: #ff4444;
+            color: white;
+            padding: 20px;
+            border-radius: 8px;
+            margin: 20px;
+            text-align: center;
+            display: none;
+        }
+        
+        .info-bar {
+            background: #764ba2;
+            color: white;
+            padding: 12px 20px;
+            font-size: 14px;
+            text-align: center;
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            z-index: 999;
+        }
+        
+        /* Mobile optimizations */
+        @media (max-width: 480px) {
+            .header {
+                padding: 12px 16px;
+            }
+            
+            .header h1 {
+                font-size: 16px;
+            }
+            
+            .widget-container {
+                top: 52px;
+            }
+        }
+        
+        /* iPhone X and newer */
+        @supports (padding-top: constant(safe-area-inset-top)) {
+            .header {
+                padding-top: calc(16px + constant(safe-area-inset-top));
+            }
+            
+            .widget-container {
+                top: calc(60px + constant(safe-area-inset-top));
+                bottom: constant(safe-area-inset-bottom);
+            }
+        }
+        
+        @supports (padding-top: env(safe-area-inset-top)) {
+            .header {
+                padding-top: calc(16px + env(safe-area-inset-top));
+            }
+            
+            .widget-container {
+                top: calc(60px + env(safe-area-inset-top));
+                bottom: env(safe-area-inset-bottom);
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>💎 Secure Payment</h1>
+        <a href="/crypto-checkout.html" class="back-button">
+            <span>←</span>
+            <span>Back</span>
+        </a>
+    </div>
+    
+    <div class="widget-container">
+        <div class="loading" id="loading">
+            <div class="spinner"></div>
+            <p>Loading payment gateway...</p>
+        </div>
+        
+        <div id="mercuryo-widget"></div>
+        
+        <div class="error" id="error"></div>
+    </div>
+    
+    <div class="info-bar" id="infoBar">
+        $15 USD → MATIC (Polygon) • Powered by Mercuryo
+    </div>
+    
+    <script>
+        // Get parameters
+        const params = new URLSearchParams(window.location.search);
+        const config = {
+            amount: params.get('amount') || '15',
+            fromCurrency: params.get('from') || 'USD',
+            toCurrency: params.get('to') || 'MATIC',
+            network: params.get('network') || 'POLYGON',
+            address: params.get('address') || '0xE5173e7c3089bD89cd1341b637b8e1951745ED5C',
+            ref: params.get('ref') || 'crypto-checkout'
+        };
+
+        // Update info bar
+        document.getElementById('infoBar').textContent = 
+            `$${config.amount} ${config.fromCurrency} → ${config.toCurrency} (${config.network}) • Powered by Mercuryo`;
+
+        // Initialize Mercuryo Widget
+        function initializeMercuryo() {
+            try {
+                // Mercuryo configuration
+                const mercuryoConfig = {
+                    // Widget configuration
+                    widgetId: 'YOUR_WIDGET_ID', // Replace with actual widget ID
+                    host: 'exchange-widget.mercuryo.io',
+                    
+                    // Transaction parameters
+                    type: 'buy',
+                    fixCrypto: false,
+                    fixFiat: true,
+                    fiatCurrency: config.fromCurrency,
+                    fiatAmount: config.amount,
+                    cryptoCurrency: config.toCurrency,
+                    network: config.network.toUpperCase(),
+                    address: config.address,
+                    
+                    // UI customization
+                    theme: 'light',
+                    lang: 'en',
+                    hideAddress: false,
+                    hideCrypto: false,
+                    hideFiat: false,
+                    
+                    // Referral
+                    refCode: config.ref,
+                    
+                    // Callbacks
+                    onSuccess: function(data) {
+                        console.log('Payment successful:', data);
+                        handleSuccess(data);
+                    },
+                    onError: function(error) {
+                        console.error('Payment error:', error);
+                        handleError(error);
+                    },
+                    onClose: function() {
+                        console.log('Widget closed');
+                        handleClose();
+                    }
+                };
+
+                // Create iframe URL
+                const widgetUrl = buildMercuryoUrl(mercuryoConfig);
+                
+                // Load widget in iframe
+                const iframe = document.createElement('iframe');
+                iframe.id = 'mercuryo-widget-iframe';
+                iframe.src = widgetUrl;
+                iframe.style.width = '100%';
+                iframe.style.height = '100%';
+                iframe.style.border = 'none';
+                iframe.onload = function() {
+                    document.getElementById('loading').style.display = 'none';
+                };
+                
+                // Replace loading with iframe
+                const widgetContainer = document.getElementById('mercuryo-widget');
+                widgetContainer.appendChild(iframe);
+                
+                // Listen for messages from widget
+                window.addEventListener('message', handleWidgetMessage);
+                
+            } catch (error) {
+                console.error('Widget initialization error:', error);
+                showError('Failed to load payment gateway. Please try again.');
+            }
+        }
+
+        // Build Mercuryo widget URL
+        function buildMercuryoUrl(config) {
+            const baseUrl = 'https://exchange-widget.mercuryo.io';
+            const params = new URLSearchParams({
+                widget_id: config.widgetId || 'default',
+                type: config.type,
+                fiat_currency: config.fiatCurrency,
+                fiat_amount: config.fiatAmount,
+                crypto_currency: config.cryptoCurrency,
+                network: config.network,
+                address: config.address,
+                fix_fiat: config.fixFiat,
+                fix_crypto: config.fixCrypto,
+                theme: config.theme,
+                lang: config.lang,
+                hide_address: config.hideAddress,
+                hide_crypto: config.hideCrypto,
+                hide_fiat: config.hideFiat,
+                ref_code: config.refCode,
+                return_url: window.location.origin + '/payment-success.html'
+            });
+            
+            return `${baseUrl}?${params.toString()}`;
+        }
+
+        // Handle messages from widget
+        function handleWidgetMessage(event) {
+            // Verify origin
+            if (!event.origin.includes('mercuryo.io')) return;
+            
+            const data = event.data;
+            console.log('Widget message:', data);
+            
+            if (data.type === 'MERCURYO_PAYMENT_SUCCESS') {
+                handleSuccess(data.payload);
+            } else if (data.type === 'MERCURYO_PAYMENT_ERROR') {
+                handleError(data.payload);
+            } else if (data.type === 'MERCURYO_WIDGET_CLOSE') {
+                handleClose();
+            }
+        }
+
+        // Handle success
+        function handleSuccess(data) {
+            // Store transaction data
+            localStorage.setItem('paymentSuccess', JSON.stringify({
+                ...data,
+                amount: config.amount,
+                currency: config.toCurrency,
+                address: config.address,
+                timestamp: new Date().toISOString()
+            }));
+            
+            // Redirect to success page
+            window.location.href = '/payment-success.html?tx=' + (data.transactionId || 'complete');
+        }
+
+        // Handle error
+        function handleError(error) {
+            showError('Payment failed: ' + (error.message || 'Unknown error'));
+        }
+
+        // Handle close
+        function handleClose() {
+            if (confirm('Cancel payment and return to checkout?')) {
+                window.location.href = '/crypto-checkout.html';
+            }
+        }
+
+        // Show error
+        function showError(message) {
+            document.getElementById('loading').style.display = 'none';
+            document.getElementById('error').style.display = 'block';
+            document.getElementById('error').innerHTML = `
+                <h3>Payment Error</h3>
+                <p>${message}</p>
+                <button onclick="location.reload()" style="margin-top: 16px; padding: 8px 16px; background: white; color: #333; border: none; border-radius: 4px; cursor: pointer;">
+                    Try Again
+                </button>
+            `;
+        }
+
+        // Fallback: Direct redirect to Mercuryo
+        function redirectToMercuryo() {
+            const mercuryoUrl = buildMercuryoUrl({
+                type: 'buy',
+                fiatCurrency: config.fromCurrency,
+                fiatAmount: config.amount,
+                cryptoCurrency: config.toCurrency,
+                network: config.network,
+                address: config.address,
+                refCode: config.ref
+            });
+            
+            window.location.href = mercuryoUrl;
+        }
+
+        // Initialize on load
+        window.addEventListener('load', function() {
+            // Try widget first
+            initializeMercuryo();
+            
+            // Fallback button after 5 seconds
+            setTimeout(() => {
+                if (document.getElementById('loading').style.display !== 'none') {
+                    const loadingDiv = document.getElementById('loading');
+                    loadingDiv.innerHTML += `
+                        <button onclick="redirectToMercuryo()" style="margin-top: 20px; padding: 12px 24px; background: #764ba2; color: white; border: none; border-radius: 8px; font-size: 16px; cursor: pointer;">
+                            Open Payment Page →
+                        </button>
+                    `;
+                }
+            }, 5000);
+        });
+
+        // Prevent accidental navigation
+        window.addEventListener('beforeunload', function(e) {
+            if (document.getElementById('loading').style.display === 'none') {
+                e.preventDefault();
+                e.returnValue = 'Payment in progress. Are you sure you want to leave?';
+            }
+        });
+    </script>
+</body>
+</html>

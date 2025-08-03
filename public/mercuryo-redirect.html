@@ -1,0 +1,279 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Processing Payment...</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: #0a0e27;
+            color: #fff;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .container {
+            text-align: center;
+            padding: 20px;
+        }
+        
+        .spinner {
+            width: 60px;
+            height: 60px;
+            border: 4px solid #1a1f3a;
+            border-top-color: #764ba2;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 24px;
+        }
+        
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+        
+        h2 {
+            font-size: 24px;
+            margin-bottom: 12px;
+        }
+        
+        p {
+            color: #8892b0;
+            margin-bottom: 24px;
+        }
+        
+        .status {
+            font-size: 14px;
+            color: #64ffda;
+            font-family: monospace;
+        }
+        
+        .error {
+            background: #ff4444;
+            color: white;
+            padding: 16px;
+            border-radius: 8px;
+            margin-top: 20px;
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="spinner"></div>
+        <h2>Preparing Secure Payment</h2>
+        <p>Redirecting to payment provider...</p>
+        <div class="status" id="status">Initializing Mercuryo...</div>
+        <div class="error" id="error"></div>
+    </div>
+
+    <script>
+        // Get parameters from URL
+        const params = new URLSearchParams(window.location.search);
+        
+        // Configuration
+        const config = {
+            amount: params.get('amount') || '15',
+            fromCurrency: params.get('from') || 'USD',
+            toCurrency: params.get('to') || 'MATIC',
+            toNetwork: params.get('network') || 'polygon',
+            address: params.get('address') || '0xE5173e7c3089bD89cd1341b637b8e1951745ED5C',
+            ref: params.get('ref') || 'crypto-checkout'
+        };
+
+        // Mobile detection
+        function isMobile() {
+            const userAgent = navigator.userAgent.toLowerCase();
+            return /iphone|ipod|ipad|android|mobile/.test(userAgent);
+        }
+
+        // Generate optimized SimpleSwap URL
+        function generateOptimizedUrl() {
+            const baseUrl = 'https://simpleswap.io';
+            
+            // For mobile, we need to force specific parameters
+            const urlParams = new URLSearchParams({
+                // Core parameters
+                from: config.fromCurrency.toLowerCase(),
+                to: `${config.toCurrency.toLowerCase()}-${config.toNetwork}`,
+                amount: config.amount,
+                address: config.address,
+                
+                // Force Mercuryo selection
+                provider: 'mercuryo',
+                selectedProvider: 'mercuryo',
+                defaultProvider: 'mercuryo',
+                forceProvider: 'true',
+                
+                // Mobile optimization
+                mobile: 'false', // Try to force desktop mode
+                desktop: 'true',
+                viewport: '1920x1080',
+                device: 'desktop',
+                
+                // Referral and tracking
+                ref: config.ref,
+                source: 'direct-link',
+                utm_source: 'crypto-payment',
+                utm_medium: 'redirect',
+                
+                // Additional parameters to ensure Mercuryo
+                method: 'card',
+                paymentMethod: 'mercuryo',
+                gateway: 'mercuryo',
+                processor: 'mercuryo',
+                
+                // Timestamp
+                t: Date.now(),
+                session: generateSessionId()
+            });
+
+            // Try different URL structures
+            const urls = [
+                `${baseUrl}/buy-crypto?${urlParams.toString()}`,
+                `${baseUrl}/exchange?${urlParams.toString()}`,
+                `${baseUrl}/buy?${urlParams.toString()}`
+            ];
+
+            return urls[0]; // Use buy-crypto as primary
+        }
+
+        // Generate Mercuryo direct URL (backup option)
+        function generateMercuryoDirectUrl() {
+            const mercuryoParams = new URLSearchParams({
+                widget_id: 'simpleswap', // SimpleSwap's Mercuryo widget ID
+                type: 'buy',
+                fiat_currency: config.fromCurrency,
+                fiat_amount: config.amount,
+                crypto_currency: config.toCurrency,
+                address: config.address,
+                network: config.toNetwork.toUpperCase(),
+                ref_code: config.ref
+            });
+
+            return `https://exchange.mercuryo.io/?${mercuryoParams.toString()}`;
+        }
+
+        // Generate session ID
+        function generateSessionId() {
+            return `${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+        }
+
+        // Force desktop user agent on mobile
+        function forceDesktopMode() {
+            if (isMobile()) {
+                // Try to override user agent (limited effectiveness)
+                Object.defineProperty(navigator, 'userAgent', {
+                    get: function() {
+                        return 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36';
+                    }
+                });
+            }
+        }
+
+        // Redirect logic
+        async function redirect() {
+            try {
+                // Update status
+                document.getElementById('status').textContent = 'Configuring payment gateway...';
+                
+                // Force desktop mode
+                forceDesktopMode();
+                
+                // Generate URLs
+                const simpleSwapUrl = generateOptimizedUrl();
+                const mercuryoUrl = generateMercuryoDirectUrl();
+                
+                // Log for debugging
+                console.log('SimpleSwap URL:', simpleSwapUrl);
+                console.log('Mercuryo Direct URL:', mercuryoUrl);
+                console.log('Is Mobile:', isMobile());
+                
+                // Store payment info
+                localStorage.setItem('pendingPayment', JSON.stringify({
+                    ...config,
+                    timestamp: new Date().toISOString(),
+                    urls: {
+                        simpleswap: simpleSwapUrl,
+                        mercuryo: mercuryoUrl
+                    }
+                }));
+                
+                // Update status
+                document.getElementById('status').textContent = 'Redirecting to secure payment...';
+                
+                // Redirect strategy
+                if (isMobile()) {
+                    // On mobile, try SimpleSwap first with forced parameters
+                    setTimeout(() => {
+                        // Use location.replace to prevent back button issues
+                        window.location.replace(simpleSwapUrl);
+                    }, 1500);
+                    
+                    // Fallback to Mercuryo direct after 5 seconds if still on page
+                    setTimeout(() => {
+                        if (document.visibilityState === 'visible') {
+                            console.log('Fallback to Mercuryo direct');
+                            window.location.replace(mercuryoUrl);
+                        }
+                    }, 5000);
+                } else {
+                    // Desktop - SimpleSwap should work fine
+                    setTimeout(() => {
+                        window.location.href = simpleSwapUrl;
+                    }, 1000);
+                }
+                
+            } catch (error) {
+                console.error('Redirect error:', error);
+                document.getElementById('error').style.display = 'block';
+                document.getElementById('error').textContent = 'Error: ' + error.message;
+            }
+        }
+
+        // Start redirect process
+        redirect();
+        
+        // Alternative: Open in new tab with desktop request
+        function openDesktopVersion() {
+            const url = generateOptimizedUrl();
+            const win = window.open(url, '_blank');
+            
+            // Try to set desktop user agent for new window
+            if (win) {
+                win.navigator.__defineGetter__('userAgent', function() {
+                    return 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36';
+                });
+            }
+        }
+        
+        // Add manual fallback button after 3 seconds
+        setTimeout(() => {
+            const button = document.createElement('button');
+            button.textContent = 'Click here if not redirected';
+            button.style.cssText = `
+                padding: 12px 24px;
+                background: #764ba2;
+                color: white;
+                border: none;
+                border-radius: 8px;
+                font-size: 16px;
+                cursor: pointer;
+                margin-top: 20px;
+            `;
+            button.onclick = () => {
+                window.location.href = generateOptimizedUrl();
+            };
+            document.querySelector('.container').appendChild(button);
+        }, 3000);
+    </script>
+</body>
+</html>
