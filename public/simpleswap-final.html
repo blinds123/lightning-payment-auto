@@ -1,0 +1,544 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <title>Buy $15 MATIC - Step by Step</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', sans-serif;
+            background: #000;
+            color: #fff;
+            min-height: 100vh;
+            padding: env(safe-area-inset-top) 20px env(safe-area-inset-bottom);
+        }
+        
+        .container {
+            max-width: 500px;
+            margin: 0 auto;
+        }
+        
+        .header {
+            text-align: center;
+            padding: 30px 0;
+        }
+        
+        .logo {
+            width: 80px;
+            height: 80px;
+            background: linear-gradient(135deg, #00D632 0%, #00A82D 100%);
+            border-radius: 24px;
+            margin: 0 auto 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 40px;
+            box-shadow: 0 10px 40px rgba(0, 214, 50, 0.3);
+        }
+        
+        h1 {
+            font-size: 32px;
+            font-weight: 700;
+            margin-bottom: 10px;
+        }
+        
+        .subtitle {
+            color: #999;
+            font-size: 18px;
+            margin-bottom: 30px;
+        }
+        
+        .step-indicator {
+            display: flex;
+            justify-content: center;
+            gap: 8px;
+            margin-bottom: 40px;
+        }
+        
+        .step-dot {
+            width: 8px;
+            height: 8px;
+            background: #333;
+            border-radius: 50%;
+            transition: all 0.3s;
+        }
+        
+        .step-dot.active {
+            width: 32px;
+            background: #00D632;
+            border-radius: 4px;
+        }
+        
+        .card {
+            background: #111;
+            border-radius: 24px;
+            padding: 32px;
+            margin-bottom: 24px;
+            border: 1px solid #222;
+        }
+        
+        .amount-card {
+            text-align: center;
+            background: linear-gradient(135deg, #111 0%, #1a1a1a 100%);
+        }
+        
+        .amount {
+            font-size: 48px;
+            font-weight: 700;
+            color: #00D632;
+            margin-bottom: 8px;
+        }
+        
+        .conversion {
+            font-size: 18px;
+            color: #999;
+        }
+        
+        .instruction-card {
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .instruction-card::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 4px;
+            height: 100%;
+            background: #00D632;
+        }
+        
+        .instruction-title {
+            font-size: 20px;
+            font-weight: 600;
+            margin-bottom: 16px;
+            padding-left: 20px;
+        }
+        
+        .instruction-steps {
+            padding-left: 20px;
+        }
+        
+        .instruction-step {
+            display: flex;
+            align-items: flex-start;
+            gap: 16px;
+            margin-bottom: 20px;
+            opacity: 0;
+            animation: fadeIn 0.5s forwards;
+        }
+        
+        .instruction-step:nth-child(1) { animation-delay: 0.1s; }
+        .instruction-step:nth-child(2) { animation-delay: 0.2s; }
+        .instruction-step:nth-child(3) { animation-delay: 0.3s; }
+        .instruction-step:nth-child(4) { animation-delay: 0.4s; }
+        
+        @keyframes fadeIn {
+            to { opacity: 1; }
+        }
+        
+        .step-number {
+            width: 32px;
+            height: 32px;
+            background: #00D632;
+            color: #000;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            flex-shrink: 0;
+        }
+        
+        .step-content h3 {
+            font-size: 18px;
+            margin-bottom: 8px;
+        }
+        
+        .step-content p {
+            color: #999;
+            font-size: 16px;
+            line-height: 1.5;
+        }
+        
+        .visual-guide {
+            background: #1a1a1a;
+            border-radius: 16px;
+            padding: 16px;
+            margin-top: 12px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        
+        .provider-preview {
+            background: #7B61FF;
+            color: white;
+            padding: 8px 16px;
+            border-radius: 8px;
+            font-weight: 600;
+            font-size: 14px;
+        }
+        
+        .arrow {
+            color: #666;
+        }
+        
+        .warning-card {
+            background: #1a1a00;
+            border: 1px solid #333300;
+            display: flex;
+            gap: 16px;
+            align-items: flex-start;
+        }
+        
+        .warning-icon {
+            font-size: 24px;
+            flex-shrink: 0;
+        }
+        
+        .warning-content h3 {
+            color: #FFD700;
+            margin-bottom: 8px;
+        }
+        
+        .warning-content p {
+            color: #ccc;
+            line-height: 1.5;
+        }
+        
+        .cta-section {
+            margin-top: 40px;
+        }
+        
+        .primary-button {
+            width: 100%;
+            padding: 20px;
+            background: linear-gradient(135deg, #00D632 0%, #00A82D 100%);
+            color: white;
+            border: none;
+            border-radius: 16px;
+            font-size: 18px;
+            font-weight: 600;
+            cursor: pointer;
+            text-decoration: none;
+            display: block;
+            text-align: center;
+            transition: all 0.3s;
+            box-shadow: 0 10px 30px rgba(0, 214, 50, 0.3);
+            margin-bottom: 16px;
+        }
+        
+        .primary-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 15px 40px rgba(0, 214, 50, 0.4);
+        }
+        
+        .secondary-button {
+            background: transparent;
+            border: 2px solid #333;
+            color: #999;
+            box-shadow: none;
+        }
+        
+        .secondary-button:hover {
+            border-color: #00D632;
+            color: #00D632;
+        }
+        
+        .address-display {
+            background: #0a0a0a;
+            border: 1px solid #222;
+            border-radius: 12px;
+            padding: 16px;
+            margin-top: 16px;
+            word-break: break-all;
+            font-family: 'SF Mono', monospace;
+            font-size: 13px;
+            color: #00D632;
+            position: relative;
+        }
+        
+        .copy-button {
+            position: absolute;
+            top: 8px;
+            right: 8px;
+            background: #222;
+            border: none;
+            padding: 8px 12px;
+            border-radius: 8px;
+            color: #999;
+            font-size: 12px;
+            cursor: pointer;
+        }
+        
+        .copy-button:hover {
+            background: #333;
+            color: #fff;
+        }
+        
+        @media (max-width: 480px) {
+            .amount {
+                font-size: 40px;
+            }
+            
+            h1 {
+                font-size: 28px;
+            }
+            
+            .instruction-step {
+                gap: 12px;
+            }
+            
+            .step-number {
+                width: 28px;
+                height: 28px;
+                font-size: 14px;
+            }
+        }
+        
+        .loading-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0,0,0,0.95);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+            backdrop-filter: blur(10px);
+        }
+        
+        .loading-modal.active {
+            display: flex;
+        }
+        
+        .loading-content {
+            text-align: center;
+            padding: 40px;
+        }
+        
+        .spinner {
+            width: 60px;
+            height: 60px;
+            border: 3px solid #222;
+            border-top-color: #00D632;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 24px;
+        }
+        
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+        
+        .loading-text {
+            font-size: 20px;
+            margin-bottom: 8px;
+        }
+        
+        .loading-subtext {
+            color: #999;
+            font-size: 16px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <div class="logo">💰</div>
+            <h1>Buy MATIC Simply</h1>
+            <p class="subtitle">$15 USD → MATIC (Polygon)</p>
+        </div>
+        
+        <div class="step-indicator">
+            <div class="step-dot active"></div>
+            <div class="step-dot"></div>
+            <div class="step-dot"></div>
+        </div>
+        
+        <div class="amount-card card">
+            <div class="amount">$15</div>
+            <div class="conversion">≈ 10-12 MATIC</div>
+        </div>
+        
+        <div class="instruction-card card">
+            <h2 class="instruction-title">How to Complete Your Purchase</h2>
+            <div class="instruction-steps">
+                <div class="instruction-step">
+                    <div class="step-number">1</div>
+                    <div class="step-content">
+                        <h3>Click "Start Purchase"</h3>
+                        <p>You'll be taken to SimpleSwap's secure checkout</p>
+                    </div>
+                </div>
+                
+                <div class="instruction-step">
+                    <div class="step-number">2</div>
+                    <div class="step-content">
+                        <h3>Click the "Buy" Button</h3>
+                        <p>This will show you payment provider options</p>
+                    </div>
+                </div>
+                
+                <div class="instruction-step">
+                    <div class="step-number">3</div>
+                    <div class="step-content">
+                        <h3>Select Mercuryo (Purple Button)</h3>
+                        <p>Look for the purple Mercuryo option - it's the best for this amount</p>
+                        <div class="visual-guide">
+                            <div class="provider-preview">Mercuryo</div>
+                            <span class="arrow">←</span>
+                            <span style="color: #00D632;">Select this one!</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="instruction-step">
+                    <div class="step-number">4</div>
+                    <div class="step-content">
+                        <h3>Complete Payment</h3>
+                        <p>Enter your card details and complete the purchase. MATIC will be sent to:</p>
+                        <div class="address-display">
+                            <span id="address">0xE5173e7c3089bD89cd1341b637b8e1951745ED5C</span>
+                            <button class="copy-button" onclick="copyAddress()">Copy</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="warning-card card">
+            <span class="warning-icon">⚠️</span>
+            <div class="warning-content">
+                <h3>Important on Mobile</h3>
+                <p>If Mercuryo isn't visible, scroll down or look for "More providers". Some providers may charge higher fees than Mercuryo's ~3.95%.</p>
+            </div>
+        </div>
+        
+        <div class="cta-section">
+            <a href="#" class="primary-button" id="startButton">
+                Start Purchase →
+            </a>
+            
+            <a href="#" class="secondary-button primary-button" id="alternativeButton">
+                Alternative: Try Direct Link
+            </a>
+        </div>
+    </div>
+    
+    <div class="loading-modal" id="loadingModal">
+        <div class="loading-content">
+            <div class="spinner"></div>
+            <div class="loading-text">Opening SimpleSwap</div>
+            <div class="loading-subtext">Remember to select Mercuryo!</div>
+        </div>
+    </div>
+    
+    <script>
+        // Configuration
+        const config = {
+            amount: 15,
+            from: 'usd',
+            to: 'matic',
+            network: 'polygon',
+            address: '0xE5173e7c3089bD89cd1341b637b8e1951745ED5C'
+        };
+        
+        // Copy address function
+        function copyAddress() {
+            const address = document.getElementById('address').textContent;
+            navigator.clipboard.writeText(address).then(() => {
+                const button = document.querySelector('.copy-button');
+                button.textContent = 'Copied!';
+                setTimeout(() => {
+                    button.textContent = 'Copy';
+                }, 2000);
+            });
+        }
+        
+        // Generate SimpleSwap URL
+        function getSimpleSwapUrl() {
+            const params = new URLSearchParams({
+                from: config.from,
+                to: `${config.to}-${config.network}`,
+                amount: config.amount,
+                address: config.address
+            });
+            
+            return `https://simpleswap.io/buy-crypto?${params.toString()}`;
+        }
+        
+        // Alternative URL with more parameters
+        function getAlternativeUrl() {
+            const params = new URLSearchParams({
+                from: config.from,
+                to: `${config.to}-${config.network}`,
+                amount: config.amount,
+                address: config.address,
+                provider: 'mercuryo',
+                ref: 'mobile-guide'
+            });
+            
+            return `https://simpleswap.io/buy-crypto?${params.toString()}`;
+        }
+        
+        // Handle start button
+        document.getElementById('startButton').addEventListener('click', function(e) {
+            e.preventDefault();
+            
+            // Show loading
+            document.getElementById('loadingModal').classList.add('active');
+            
+            // Log the action
+            console.log('Starting purchase:', {
+                url: getSimpleSwapUrl(),
+                timestamp: new Date().toISOString()
+            });
+            
+            // Store in localStorage
+            localStorage.setItem('pendingPurchase', JSON.stringify({
+                ...config,
+                timestamp: new Date().toISOString(),
+                instructions: 'Select Mercuryo provider'
+            }));
+            
+            // Redirect after animation
+            setTimeout(() => {
+                window.location.href = getSimpleSwapUrl();
+            }, 1500);
+        });
+        
+        // Handle alternative button
+        document.getElementById('alternativeButton').addEventListener('click', function(e) {
+            e.preventDefault();
+            
+            // Show loading
+            document.getElementById('loadingModal').classList.add('active');
+            
+            // Try alternative URL
+            setTimeout(() => {
+                window.location.href = getAlternativeUrl();
+            }, 1500);
+        });
+        
+        // Animate on load
+        window.addEventListener('load', function() {
+            document.querySelectorAll('.instruction-step').forEach((step, index) => {
+                step.style.animationDelay = `${0.1 * (index + 1)}s`;
+            });
+        });
+    </script>
+</body>
+</html>
