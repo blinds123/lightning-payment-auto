@@ -1,0 +1,401 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <title>Buy MATIC with Card - $15 USD</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: #0a0e27;
+            color: #fff;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 450px;
+            width: 100%;
+            text-align: center;
+        }
+        
+        .logo {
+            width: 80px;
+            height: 80px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-radius: 20px;
+            margin: 0 auto 24px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 36px;
+            box-shadow: 0 10px 30px rgba(102, 126, 234, 0.3);
+        }
+        
+        h1 {
+            font-size: 28px;
+            font-weight: 700;
+            margin-bottom: 12px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        
+        .subtitle {
+            color: #8892b0;
+            font-size: 18px;
+            margin-bottom: 32px;
+        }
+        
+        .payment-box {
+            background: #1a1f3a;
+            border-radius: 24px;
+            padding: 32px;
+            margin-bottom: 24px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+        }
+        
+        .amount-display {
+            font-size: 48px;
+            font-weight: 700;
+            color: #64ffda;
+            margin-bottom: 8px;
+        }
+        
+        .conversion {
+            color: #8892b0;
+            font-size: 16px;
+            margin-bottom: 24px;
+        }
+        
+        .address-section {
+            background: #0a0e27;
+            border-radius: 16px;
+            padding: 20px;
+            margin-bottom: 24px;
+            border: 1px solid #2a3354;
+        }
+        
+        .address-label {
+            font-size: 12px;
+            color: #8892b0;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 8px;
+        }
+        
+        .address {
+            font-family: monospace;
+            font-size: 14px;
+            color: #64ffda;
+            word-break: break-all;
+            line-height: 1.5;
+        }
+        
+        .payment-methods {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 12px;
+            margin-bottom: 32px;
+        }
+        
+        .method {
+            background: #0a0e27;
+            border: 1px solid #2a3354;
+            border-radius: 12px;
+            padding: 16px;
+            font-size: 14px;
+            color: #8892b0;
+            transition: all 0.2s;
+        }
+        
+        .method:hover {
+            border-color: #764ba2;
+            color: #fff;
+        }
+        
+        .buy-button {
+            width: 100%;
+            padding: 20px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border: none;
+            border-radius: 16px;
+            color: white;
+            font-size: 20px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            box-shadow: 0 10px 30px rgba(102, 126, 234, 0.3);
+            text-decoration: none;
+            display: block;
+            margin-bottom: 16px;
+        }
+        
+        .buy-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 15px 40px rgba(102, 126, 234, 0.4);
+        }
+        
+        .buy-button:active {
+            transform: translateY(0);
+        }
+        
+        .direct-button {
+            background: transparent;
+            border: 2px solid #764ba2;
+            color: #764ba2;
+            box-shadow: none;
+        }
+        
+        .direct-button:hover {
+            background: #764ba2;
+            color: white;
+        }
+        
+        .security {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            color: #8892b0;
+            font-size: 14px;
+            margin-top: 24px;
+        }
+        
+        .info-box {
+            background: #0f1322;
+            border: 1px solid #1a1f3a;
+            border-radius: 16px;
+            padding: 20px;
+            margin-bottom: 24px;
+            text-align: left;
+        }
+        
+        .info-box h3 {
+            color: #64ffda;
+            font-size: 16px;
+            margin-bottom: 12px;
+        }
+        
+        .info-box ul {
+            list-style: none;
+            padding: 0;
+        }
+        
+        .info-box li {
+            color: #8892b0;
+            font-size: 14px;
+            margin-bottom: 8px;
+            padding-left: 20px;
+            position: relative;
+        }
+        
+        .info-box li:before {
+            content: "✓";
+            position: absolute;
+            left: 0;
+            color: #64ffda;
+        }
+        
+        @media (max-width: 480px) {
+            .amount-display {
+                font-size: 40px;
+            }
+            
+            .payment-methods {
+                grid-template-columns: 1fr;
+            }
+        }
+        
+        .loading {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(10, 14, 39, 0.95);
+            z-index: 9999;
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
+        }
+        
+        .loading.active {
+            display: flex;
+        }
+        
+        .spinner {
+            width: 50px;
+            height: 50px;
+            border: 3px solid #1a1f3a;
+            border-top-color: #764ba2;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin-bottom: 16px;
+        }
+        
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="logo">💎</div>
+        <h1>Buy MATIC Instantly</h1>
+        <p class="subtitle">Simple. Secure. No KYB Required.</p>
+        
+        <div class="payment-box">
+            <div class="amount-display">$15</div>
+            <div class="conversion">≈ 10-12 MATIC (Polygon)</div>
+            
+            <div class="address-section">
+                <div class="address-label">Receiving Address</div>
+                <div class="address">0xE5173e7c3089bD89cd1341b637b8e1951745ED5C</div>
+            </div>
+        </div>
+        
+        <div class="info-box">
+            <h3>✨ Why This Works</h3>
+            <ul>
+                <li>Direct integration with Mercuryo</li>
+                <li>No merchant KYB needed</li>
+                <li>Customer handles their own verification</li>
+                <li>Instant MATIC delivery to your wallet</li>
+            </ul>
+        </div>
+        
+        <div class="payment-methods">
+            <div class="method">💳 Visa/Mastercard</div>
+            <div class="method">🏦 Bank Transfer</div>
+            <div class="method">📱 Apple Pay</div>
+            <div class="method">💰 Google Pay</div>
+        </div>
+        
+        <a href="#" class="buy-button" id="mercuryoButton">
+            Buy with Mercuryo →
+        </a>
+        
+        <a href="#" class="buy-button direct-button" id="simpleswapButton">
+            Alternative: SimpleSwap →
+        </a>
+        
+        <div class="security">
+            <span>🔒</span>
+            <span>Secure payment powered by licensed providers</span>
+        </div>
+    </div>
+    
+    <div class="loading" id="loadingScreen">
+        <div class="spinner"></div>
+        <p style="color: #8892b0;">Preparing secure checkout...</p>
+    </div>
+    
+    <script>
+        // Configuration
+        const config = {
+            amount: 15,
+            currency: 'USD',
+            crypto: 'MATIC',
+            network: 'POLYGON',
+            address: '0xE5173e7c3089bD89cd1341b637b8e1951745ED5C'
+        };
+        
+        // Direct Mercuryo Widget URL
+        function getMercuryoUrl() {
+            const params = new URLSearchParams({
+                widget_id: '67f0e89b-c77f-4c67-ad7e-b2d2ea7a7e4e', // SimpleSwap's widget ID
+                type: 'buy',
+                currency: config.crypto,
+                network: config.network,
+                fiat_currency: config.currency,
+                fiat_amount: config.amount,
+                address: config.address,
+                fix_fiat: true,
+                fix_crypto: false,
+                theme: 'light',
+                lang: 'en',
+                return_url: window.location.origin + '/payment-success.html'
+            });
+            
+            return `https://exchange.mercuryo.io/?${params.toString()}`;
+        }
+        
+        // SimpleSwap URL with Mercuryo forced
+        function getSimpleSwapUrl() {
+            // Format: simpleswap.io/buy-crypto?from=usd&to=matic-polygon&amount=15&address=...
+            const baseUrl = 'https://simpleswap.io/buy-crypto';
+            const params = new URLSearchParams({
+                from: config.currency.toLowerCase(),
+                to: `${config.crypto.toLowerCase()}-${config.network.toLowerCase()}`,
+                amount: config.amount,
+                address: config.address,
+                provider: 'mercuryo',
+                fixed: 'true'
+            });
+            
+            return `${baseUrl}?${params.toString()}`;
+        }
+        
+        // Mercuryo button - Direct widget
+        document.getElementById('mercuryoButton').addEventListener('click', function(e) {
+            e.preventDefault();
+            
+            // Show loading
+            document.getElementById('loadingScreen').classList.add('active');
+            
+            // Store payment info
+            localStorage.setItem('pendingPayment', JSON.stringify({
+                ...config,
+                provider: 'mercuryo',
+                timestamp: new Date().toISOString()
+            }));
+            
+            // Direct to Mercuryo widget
+            setTimeout(() => {
+                window.location.href = getMercuryoUrl();
+            }, 500);
+        });
+        
+        // SimpleSwap button - Backup option
+        document.getElementById('simpleswapButton').addEventListener('click', function(e) {
+            e.preventDefault();
+            
+            // Show loading
+            document.getElementById('loadingScreen').classList.add('active');
+            
+            // Store payment info
+            localStorage.setItem('pendingPayment', JSON.stringify({
+                ...config,
+                provider: 'simpleswap',
+                timestamp: new Date().toISOString()
+            }));
+            
+            // Redirect to SimpleSwap
+            setTimeout(() => {
+                window.location.href = getSimpleSwapUrl();
+            }, 500);
+        });
+        
+        // Log page load
+        console.log('Payment page loaded', {
+            mercuryoUrl: getMercuryoUrl(),
+            simpleswapUrl: getSimpleSwapUrl(),
+            device: /iPhone|iPad|iPod|Android/i.test(navigator.userAgent) ? 'mobile' : 'desktop'
+        });
+    </script>
+</body>
+</html>
