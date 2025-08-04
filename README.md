@@ -214,3 +214,26 @@ MIT License - feel free to use commercially!
 
 - GitHub Issues: [Report a bug](https://github.com/blinds123/lightning-payment-auto/issues)
 - Documentation: [View full docs](https://github.com/blinds123/lightning-payment-auto/wiki)
+
+---
+
+## 🆕 SimpleSwap/Mercuryo Integration (NEW)
+
+We've also developed solutions for accepting fiat payments that convert to crypto (MATIC on Polygon) using SimpleSwap and Mercuryo:
+
+### 🚀 Ultra Solution
+After extensive research and testing, we've created multiple approaches for the SimpleSwap/Mercuryo use case:
+
+**Live Demo**: https://lightning-payment-system-7xzy4.ondigitalocean.app/ultra-solution.html
+
+### Available Solutions:
+1. **Direct Mercuryo Widget** - Bypasses SimpleSwap, works perfectly on all devices
+2. **Browser Automation Proxy** - Automatically clicks Mercuryo (experimental)
+3. **Manual Selection Guide** - Step-by-step instructions for users
+
+### Key Findings:
+- SimpleSwap doesn't support URL-based provider pre-selection on mobile
+- Direct Mercuryo integration is the most reliable solution
+- Browser automation is possible but resource-intensive
+
+See [ULTRA-SOLUTION-SUMMARY.md](ULTRA-SOLUTION-SUMMARY.md) for complete technical details.
