@@ -1,0 +1,635 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, user-scalable=no">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="format-detection" content="telephone=no">
+    <title>Buy MATIC - $15 USD</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+            -webkit-touch-callout: none;
+            -webkit-user-select: none;
+            user-select: none;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Segoe UI', sans-serif;
+            background: #000;
+            color: #fff;
+            min-height: 100vh;
+            min-height: -webkit-fill-available;
+            overflow-x: hidden;
+            position: relative;
+        }
+        
+        .container {
+            min-height: 100vh;
+            min-height: -webkit-fill-available;
+            display: flex;
+            flex-direction: column;
+            padding: env(safe-area-inset-top) 20px env(safe-area-inset-bottom) 20px;
+        }
+        
+        .header {
+            text-align: center;
+            padding: 20px 0;
+        }
+        
+        .logo {
+            width: 60px;
+            height: 60px;
+            background: linear-gradient(135deg, #00D4FF 0%, #7B2FF7 100%);
+            border-radius: 20px;
+            margin: 0 auto 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 28px;
+        }
+        
+        h1 {
+            font-size: 32px;
+            font-weight: 700;
+            margin-bottom: 8px;
+            letter-spacing: -0.5px;
+        }
+        
+        .subtitle {
+            color: #999;
+            font-size: 17px;
+        }
+        
+        .card {
+            background: #1C1C1E;
+            border-radius: 20px;
+            padding: 24px;
+            margin: 20px 0;
+        }
+        
+        .amount-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+        
+        .amount-label {
+            font-size: 17px;
+            color: #999;
+        }
+        
+        .amount-value {
+            font-size: 34px;
+            font-weight: 700;
+            color: #00D4FF;
+        }
+        
+        .conversion {
+            text-align: center;
+            font-size: 15px;
+            color: #999;
+            margin-bottom: 24px;
+        }
+        
+        .address-container {
+            background: #000;
+            border-radius: 16px;
+            padding: 16px;
+            margin-bottom: 20px;
+        }
+        
+        .address-label {
+            font-size: 13px;
+            color: #999;
+            margin-bottom: 8px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        
+        .address {
+            font-family: 'SF Mono', monospace;
+            font-size: 13px;
+            color: #00D4FF;
+            word-break: break-all;
+            line-height: 1.4;
+        }
+        
+        .network-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            background: #7B2FF7;
+            color: white;
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 13px;
+            font-weight: 600;
+            margin-top: 12px;
+        }
+        
+        .providers {
+            margin: 24px 0;
+        }
+        
+        .providers-title {
+            font-size: 17px;
+            font-weight: 600;
+            margin-bottom: 16px;
+        }
+        
+        .provider-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 12px;
+        }
+        
+        .provider {
+            background: #2C2C2E;
+            border-radius: 12px;
+            padding: 16px;
+            text-align: center;
+            font-size: 14px;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .provider.mercuryo {
+            background: linear-gradient(135deg, #7B2FF7 0%, #00D4FF 100%);
+            color: white;
+            font-weight: 600;
+        }
+        
+        .provider.mercuryo::after {
+            content: "RECOMMENDED";
+            position: absolute;
+            top: 4px;
+            right: -30px;
+            background: rgba(0,0,0,0.3);
+            color: white;
+            font-size: 9px;
+            padding: 2px 30px;
+            transform: rotate(45deg);
+            letter-spacing: 0.5px;
+        }
+        
+        .buy-button {
+            background: linear-gradient(135deg, #00D4FF 0%, #7B2FF7 100%);
+            color: white;
+            border: none;
+            border-radius: 16px;
+            padding: 20px;
+            font-size: 18px;
+            font-weight: 600;
+            width: 100%;
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+            margin-top: auto;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            text-decoration: none;
+            -webkit-appearance: none;
+            touch-action: manipulation;
+        }
+        
+        .buy-button:active {
+            transform: scale(0.98);
+        }
+        
+        .buy-button::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+            transition: left 0.5s;
+        }
+        
+        .buy-button:hover::before {
+            left: 100%;
+        }
+        
+        .info {
+            background: #1C1C1E;
+            border-radius: 16px;
+            padding: 16px;
+            margin-bottom: 20px;
+        }
+        
+        .info-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 12px;
+            font-size: 15px;
+        }
+        
+        .info-item:last-child {
+            margin-bottom: 0;
+        }
+        
+        .info-icon {
+            width: 24px;
+            height: 24px;
+            background: #2C2C2E;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+        
+        .loading-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0,0,0,0.9);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
+            z-index: 9999;
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+        }
+        
+        .loading-overlay.active {
+            display: flex;
+        }
+        
+        .spinner {
+            width: 50px;
+            height: 50px;
+            border: 3px solid #1C1C1E;
+            border-top-color: #00D4FF;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin-bottom: 20px;
+        }
+        
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+        
+        .loading-text {
+            font-size: 17px;
+            color: #999;
+            text-align: center;
+        }
+        
+        .loading-steps {
+            margin-top: 20px;
+            padding: 0 40px;
+        }
+        
+        .step {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 16px;
+            opacity: 0.5;
+            transition: opacity 0.3s;
+        }
+        
+        .step.active {
+            opacity: 1;
+        }
+        
+        .step-icon {
+            width: 24px;
+            height: 24px;
+            background: #1C1C1E;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+        }
+        
+        .step.active .step-icon {
+            background: #00D4FF;
+            color: black;
+        }
+        
+        .step-text {
+            font-size: 15px;
+        }
+        
+        @media (max-width: 375px) {
+            h1 {
+                font-size: 28px;
+            }
+            
+            .amount-value {
+                font-size: 28px;
+            }
+            
+            .provider-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+        
+        /* Prevent zoom on input focus */
+        input, select, textarea {
+            font-size: 16px !important;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <div class="logo">💎</div>
+            <h1>Buy MATIC</h1>
+            <p class="subtitle">Simple & Secure Purchase</p>
+        </div>
+        
+        <div class="card">
+            <div class="amount-row">
+                <span class="amount-label">You Pay</span>
+                <span class="amount-value">$15</span>
+            </div>
+            
+            <div class="conversion">
+                ≈ 10-12 MATIC
+            </div>
+            
+            <div class="address-container">
+                <div class="address-label">Delivery Address</div>
+                <div class="address">0xE5173e7c3089bD89cd1341b637b8e1951745ED5C</div>
+                <span class="network-badge">
+                    <span>⬡</span>
+                    <span>Polygon Network</span>
+                </span>
+            </div>
+        </div>
+        
+        <div class="providers">
+            <div class="providers-title">Payment Provider</div>
+            <div class="provider-grid">
+                <div class="provider mercuryo">
+                    ✓ Mercuryo
+                </div>
+                <div class="provider">
+                    MoonPay
+                </div>
+            </div>
+        </div>
+        
+        <div class="info">
+            <div class="info-item">
+                <div class="info-icon">✓</div>
+                <span>No merchant KYB required</span>
+            </div>
+            <div class="info-item">
+                <div class="info-icon">⚡</div>
+                <span>Instant delivery to wallet</span>
+            </div>
+            <div class="info-item">
+                <div class="info-icon">🔒</div>
+                <span>Secure & licensed provider</span>
+            </div>
+        </div>
+        
+        <a href="#" class="buy-button" id="buyButton">
+            <span>Continue to Payment</span>
+            <span>→</span>
+        </a>
+    </div>
+    
+    <div class="loading-overlay" id="loadingOverlay">
+        <div class="spinner"></div>
+        <div class="loading-text">Preparing Secure Checkout</div>
+        <div class="loading-steps">
+            <div class="step" id="step1">
+                <div class="step-icon">1</div>
+                <div class="step-text">Configuring payment provider</div>
+            </div>
+            <div class="step" id="step2">
+                <div class="step-icon">2</div>
+                <div class="step-text">Setting up Mercuryo</div>
+            </div>
+            <div class="step" id="step3">
+                <div class="step-icon">3</div>
+                <div class="step-text">Redirecting to checkout</div>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        // Configuration
+        const PAYMENT_CONFIG = {
+            amount: 15,
+            fromCurrency: 'USD',
+            toCurrency: 'MATIC',
+            network: 'POLYGON',
+            address: '0xE5173e7c3089bD89cd1341b637b8e1951745ED5C',
+            provider: 'mercuryo'
+        };
+        
+        // Mobile detection
+        const isMobile = {
+            iOS: /iPhone|iPad|iPod/i.test(navigator.userAgent),
+            Android: /Android/i.test(navigator.userAgent),
+            any: function() {
+                return this.iOS || this.Android;
+            }
+        };
+        
+        // Generate optimized SimpleSwap URL
+        function generateSimpleSwapUrl() {
+            const baseUrl = 'https://simpleswap.io';
+            
+            // Different URL strategies for mobile vs desktop
+            if (isMobile.any()) {
+                // Mobile strategy: Use buy-crypto with specific parameters
+                const params = new URLSearchParams({
+                    // Core parameters
+                    from: PAYMENT_CONFIG.fromCurrency.toLowerCase(),
+                    to: `${PAYMENT_CONFIG.toCurrency.toLowerCase()}-${PAYMENT_CONFIG.network.toLowerCase()}`,
+                    amount: PAYMENT_CONFIG.amount,
+                    address: PAYMENT_CONFIG.address,
+                    
+                    // Force Mercuryo selection
+                    provider: 'mercuryo',
+                    selected_provider: 'mercuryo',
+                    default_provider: 'mercuryo',
+                    
+                    // Mobile optimization
+                    mobile: 'true',
+                    app: 'false',
+                    
+                    // Additional parameters
+                    ref: 'mobile-direct',
+                    utm_source: 'mobile_web',
+                    utm_medium: 'direct_link',
+                    
+                    // Session tracking
+                    session: generateSessionId(),
+                    t: Date.now()
+                });
+                
+                return `${baseUrl}/buy-crypto?${params.toString()}`;
+            } else {
+                // Desktop strategy
+                const params = new URLSearchParams({
+                    from: PAYMENT_CONFIG.fromCurrency.toLowerCase(),
+                    to: `${PAYMENT_CONFIG.toCurrency.toLowerCase()}-${PAYMENT_CONFIG.network.toLowerCase()}`,
+                    amount: PAYMENT_CONFIG.amount,
+                    address: PAYMENT_CONFIG.address,
+                    provider: 'mercuryo',
+                    fixed: 'true'
+                });
+                
+                return `${baseUrl}/buy-crypto?${params.toString()}`;
+            }
+        }
+        
+        // Generate session ID
+        function generateSessionId() {
+            return `mob_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+        }
+        
+        // Store payment data
+        function storePaymentData() {
+            const paymentData = {
+                ...PAYMENT_CONFIG,
+                timestamp: new Date().toISOString(),
+                sessionId: generateSessionId(),
+                device: {
+                    type: isMobile.iOS ? 'iOS' : isMobile.Android ? 'Android' : 'Desktop',
+                    userAgent: navigator.userAgent,
+                    viewport: `${window.innerWidth}x${window.innerHeight}`,
+                    pixelRatio: window.devicePixelRatio
+                }
+            };
+            
+            localStorage.setItem('pendingPayment', JSON.stringify(paymentData));
+            
+            // Also store in sessionStorage as backup
+            sessionStorage.setItem('paymentSession', JSON.stringify(paymentData));
+            
+            return paymentData;
+        }
+        
+        // Animate loading steps
+        function animateLoadingSteps() {
+            const steps = ['step1', 'step2', 'step3'];
+            let currentStep = 0;
+            
+            const interval = setInterval(() => {
+                if (currentStep < steps.length) {
+                    document.getElementById(steps[currentStep]).classList.add('active');
+                    currentStep++;
+                } else {
+                    clearInterval(interval);
+                }
+            }, 500);
+            
+            return interval;
+        }
+        
+        // Handle buy button click
+        document.getElementById('buyButton').addEventListener('click', function(e) {
+            e.preventDefault();
+            
+            // Show loading overlay
+            document.getElementById('loadingOverlay').classList.add('active');
+            
+            // Animate steps
+            const stepsAnimation = animateLoadingSteps();
+            
+            // Store payment data
+            const paymentData = storePaymentData();
+            
+            // Generate URL
+            const paymentUrl = generateSimpleSwapUrl();
+            
+            // Log for debugging
+            console.log('Payment initiated:', {
+                url: paymentUrl,
+                data: paymentData
+            });
+            
+            // Redirect after animation
+            setTimeout(() => {
+                // Clear animation
+                clearInterval(stepsAnimation);
+                
+                // Different redirect strategies for mobile
+                if (isMobile.iOS) {
+                    // iOS: Use location.replace to prevent back button issues
+                    window.location.replace(paymentUrl);
+                } else if (isMobile.Android) {
+                    // Android: Use location.href
+                    window.location.href = paymentUrl;
+                } else {
+                    // Desktop: Standard redirect
+                    window.location.href = paymentUrl;
+                }
+            }, 2000);
+        });
+        
+        // Prevent accidental navigation
+        let navigationWarningShown = false;
+        window.addEventListener('beforeunload', function(e) {
+            const loadingActive = document.getElementById('loadingOverlay').classList.contains('active');
+            if (loadingActive && !navigationWarningShown) {
+                navigationWarningShown = true;
+                e.preventDefault();
+                e.returnValue = 'Payment in progress. Are you sure you want to leave?';
+            }
+        });
+        
+        // Handle page visibility
+        document.addEventListener('visibilitychange', function() {
+            if (!document.hidden) {
+                const pendingPayment = localStorage.getItem('pendingPayment');
+                if (pendingPayment) {
+                    console.log('User returned to page, payment data:', JSON.parse(pendingPayment));
+                }
+            }
+        });
+        
+        // iOS specific optimizations
+        if (isMobile.iOS) {
+            // Prevent zoom on double tap
+            let lastTouchEnd = 0;
+            document.addEventListener('touchend', function(e) {
+                const now = Date.now();
+                if (now - lastTouchEnd <= 300) {
+                    e.preventDefault();
+                }
+                lastTouchEnd = now;
+            }, false);
+            
+            // Fix viewport height
+            function setViewportHeight() {
+                const vh = window.innerHeight * 0.01;
+                document.documentElement.style.setProperty('--vh', `${vh}px`);
+            }
+            setViewportHeight();
+            window.addEventListener('resize', setViewportHeight);
+        }
+        
+        // Log initialization
+        console.log('SimpleSwap Mobile Optimized - Initialized', {
+            device: isMobile.iOS ? 'iOS' : isMobile.Android ? 'Android' : 'Desktop',
+            viewport: `${window.innerWidth}x${window.innerHeight}`,
+            url: generateSimpleSwapUrl()
+        });
+    </script>
+</body>
+</html>
