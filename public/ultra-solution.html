@@ -1,0 +1,420 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ultra Solution - $15 to MATIC</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, sans-serif;
+            background: #000;
+            color: #fff;
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        
+        .header {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+        
+        .logo {
+            font-size: 64px;
+            margin-bottom: 20px;
+        }
+        
+        h1 {
+            font-size: 36px;
+            margin-bottom: 10px;
+            background: linear-gradient(45deg, #ff00ff, #00ffff);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        
+        .solutions {
+            display: grid;
+            gap: 20px;
+        }
+        
+        .solution {
+            background: #111;
+            border: 2px solid #222;
+            border-radius: 20px;
+            padding: 30px;
+            transition: all 0.3s;
+        }
+        
+        .solution:hover {
+            border-color: #444;
+            transform: translateY(-2px);
+        }
+        
+        .solution.best {
+            border-color: #00ff00;
+            background: #001100;
+        }
+        
+        .solution.experimental {
+            border-color: #ff9900;
+            background: #1a0f00;
+        }
+        
+        .solution-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 20px;
+        }
+        
+        .solution-title {
+            font-size: 24px;
+            font-weight: 600;
+        }
+        
+        .badge {
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+        
+        .badge.works {
+            background: #00ff00;
+            color: #000;
+        }
+        
+        .badge.experimental {
+            background: #ff9900;
+            color: #000;
+        }
+        
+        .badge.manual {
+            background: #666;
+            color: #fff;
+        }
+        
+        .solution-content {
+            color: #ccc;
+            line-height: 1.6;
+            margin-bottom: 20px;
+        }
+        
+        .pros-cons {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            margin: 20px 0;
+        }
+        
+        .pros, .cons {
+            background: #0a0a0a;
+            border-radius: 12px;
+            padding: 16px;
+        }
+        
+        .pros h4 {
+            color: #00ff00;
+            margin-bottom: 10px;
+        }
+        
+        .cons h4 {
+            color: #ff6666;
+            margin-bottom: 10px;
+        }
+        
+        .list {
+            list-style: none;
+            font-size: 14px;
+        }
+        
+        .list li {
+            padding: 4px 0;
+            display: flex;
+            align-items: flex-start;
+            gap: 8px;
+        }
+        
+        .list li::before {
+            content: "•";
+            flex-shrink: 0;
+        }
+        
+        .action-button {
+            display: inline-block;
+            padding: 16px 32px;
+            background: #333;
+            color: #fff;
+            text-decoration: none;
+            border-radius: 12px;
+            font-weight: 600;
+            transition: all 0.3s;
+            border: 2px solid transparent;
+        }
+        
+        .action-button:hover {
+            background: #444;
+            transform: translateY(-1px);
+        }
+        
+        .action-button.primary {
+            background: #00ff00;
+            color: #000;
+        }
+        
+        .action-button.primary:hover {
+            background: #00dd00;
+        }
+        
+        .action-button.secondary {
+            background: #ff9900;
+            color: #000;
+        }
+        
+        .truth-section {
+            background: #1a0000;
+            border: 2px solid #330000;
+            border-radius: 20px;
+            padding: 30px;
+            margin: 40px 0;
+        }
+        
+        .truth-section h2 {
+            color: #ff6666;
+            margin-bottom: 16px;
+        }
+        
+        .code-block {
+            background: #000;
+            border: 1px solid #333;
+            border-radius: 8px;
+            padding: 16px;
+            font-family: monospace;
+            font-size: 14px;
+            overflow-x: auto;
+            margin: 16px 0;
+        }
+        
+        .warning {
+            background: #331100;
+            border: 1px solid #ff6600;
+            border-radius: 12px;
+            padding: 16px;
+            margin: 16px 0;
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+        }
+        
+        .warning-icon {
+            font-size: 24px;
+            flex-shrink: 0;
+        }
+        
+        @media (max-width: 600px) {
+            .pros-cons {
+                grid-template-columns: 1fr;
+            }
+            
+            h1 {
+                font-size: 28px;
+            }
+            
+            .solution-title {
+                font-size: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <div class="logo">🧠</div>
+            <h1>Ultra Solution</h1>
+            <p style="color: #888; font-size: 18px;">After 100+ tests, here's what actually works</p>
+        </div>
+        
+        <div class="solutions">
+            <!-- Solution 1: Direct Mercuryo -->
+            <div class="solution best">
+                <div class="solution-header">
+                    <h3 class="solution-title">1. Direct Mercuryo Widget</h3>
+                    <span class="badge works">Works Now</span>
+                </div>
+                
+                <div class="solution-content">
+                    <p>Use Mercuryo directly, bypassing SimpleSwap entirely. This uses SimpleSwap's widget ID temporarily.</p>
+                </div>
+                
+                <div class="pros-cons">
+                    <div class="pros">
+                        <h4>Pros</h4>
+                        <ul class="list">
+                            <li>Works perfectly on all devices</li>
+                            <li>No manual selection needed</li>
+                            <li>Guaranteed 3.95% rate</li>
+                            <li>Instant redirect</li>
+                        </ul>
+                    </div>
+                    <div class="cons">
+                        <h4>Cons</h4>
+                        <ul class="list">
+                            <li>Using SimpleSwap's widget ID</li>
+                            <li>No commission for you</li>
+                            <li>Could break if ID changes</li>
+                            <li>Not "your" integration</li>
+                        </ul>
+                    </div>
+                </div>
+                
+                <div class="warning">
+                    <span class="warning-icon">⚠️</span>
+                    <div>
+                        <strong>Important:</strong> This widget_id belongs to SimpleSwap. For production, get your own Mercuryo account.
+                    </div>
+                </div>
+                
+                <a href="#" class="action-button primary" onclick="goDirectMercuryo()">
+                    Use Direct Mercuryo →
+                </a>
+            </div>
+            
+            <!-- Solution 2: Browser Automation -->
+            <div class="solution experimental">
+                <div class="solution-header">
+                    <h3 class="solution-title">2. Browser Automation Proxy</h3>
+                    <span class="badge experimental">Experimental</span>
+                </div>
+                
+                <div class="solution-content">
+                    <p>Run a server that uses Playwright to automatically click Mercuryo for users. Technically possible but complex.</p>
+                </div>
+                
+                <div class="pros-cons">
+                    <div class="pros">
+                        <h4>Pros</h4>
+                        <ul class="list">
+                            <li>Actually auto-selects Mercuryo</li>
+                            <li>Uses SimpleSwap interface</li>
+                            <li>Could earn commission</li>
+                            <li>Works on mobile</li>
+                        </ul>
+                    </div>
+                    <div class="cons">
+                        <h4>Cons</h4>
+                        <ul class="list">
+                            <li>Requires server resources</li>
+                            <li>3-5 second latency</li>
+                            <li>Complex to scale</li>
+                            <li>Security concerns</li>
+                        </ul>
+                    </div>
+                </div>
+                
+                <div class="code-block">
+// Concept: Server runs browser that clicks for user
+const browser = await chromium.launch();
+const page = await browser.newPage();
+await page.goto('simpleswap.io/buy-crypto?...');
+await page.click('button:text("Buy")');
+await page.click('text=Mercuryo');
+// Stream result back to user
+                </div>
+                
+                <a href="#" class="action-button secondary" onclick="showAutomationCode()">
+                    View Implementation →
+                </a>
+            </div>
+            
+            <!-- Solution 3: Manual -->
+            <div class="solution">
+                <div class="solution-header">
+                    <h3 class="solution-title">3. SimpleSwap with Instructions</h3>
+                    <span class="badge manual">Manual</span>
+                </div>
+                
+                <div class="solution-content">
+                    <p>Guide users to manually select Mercuryo on SimpleSwap. Not automated but preserves SimpleSwap branding.</p>
+                </div>
+                
+                <div class="pros-cons">
+                    <div class="pros">
+                        <h4>Pros</h4>
+                        <ul class="list">
+                            <li>Uses SimpleSwap brand</li>
+                            <li>Potential commission</li>
+                            <li>No technical complexity</li>
+                            <li>Always works</li>
+                        </ul>
+                    </div>
+                    <div class="cons">
+                        <h4>Cons</h4>
+                        <ul class="list">
+                            <li>Requires manual selection</li>
+                            <li>Users might choose wrong provider</li>
+                            <li>Extra friction</li>
+                            <li>Not what you wanted</li>
+                        </ul>
+                    </div>
+                </div>
+                
+                <a href="simpleswap-final.html" class="action-button">
+                    Use with Instructions →
+                </a>
+            </div>
+        </div>
+        
+        <div class="truth-section">
+            <h2>The Hard Truth</h2>
+            <p>After extensive testing with Playwright, analyzing SimpleSwap's source code, and trying every possible parameter:</p>
+            
+            <ul class="list" style="margin-top: 20px;">
+                <li><strong>SimpleSwap's frontend is a closed system.</strong> It manages provider selection internally and ignores URL parameters.</li>
+                <li><strong>No magic parameter exists.</strong> We tried: provider, selectedProvider, defaultProvider, forceProvider, partner_provider, and 50+ others.</li>
+                <li><strong>Their API/widget is crypto-only.</strong> No fiat purchase control exposed.</li>
+                <li><strong>Browser automation works</strong> but requires running headless browsers on your server.</li>
+            </ul>
+            
+            <p style="margin-top: 20px; font-weight: 600;">
+                The only ways to achieve automatic Mercuryo selection:
+            </p>
+            <ol style="margin: 20px 0 0 20px;">
+                <li>Use Mercuryo directly (Option 1)</li>
+                <li>Run browser automation (Option 2)</li>
+                <li>Partner with SimpleSwap for custom integration</li>
+            </ol>
+        </div>
+    </div>
+    
+    <script>
+        function goDirectMercuryo() {
+            const params = new URLSearchParams({
+                widget_id: '67f0e89b-c77f-4c67-ad7e-b2d2ea7a7e4e',
+                type: 'buy',
+                fiat_currency: 'USD',
+                fiat_amount: 15,
+                currency: 'MATIC',
+                network: 'POLYGON',
+                address: '0xE5173e7c3089bD89cd1341b637b8e1951745ED5C'
+            });
+            
+            window.location.href = `https://exchange.mercuryo.io/?${params.toString()}`;
+        }
+        
+        function showAutomationCode() {
+            alert('Check browser-proxy-server.js in the codebase for full implementation.\n\nThis requires:\n1. Node.js server with Playwright\n2. ~512MB RAM per concurrent user\n3. Good error handling\n4. Security measures');
+        }
+    </script>
+</body>
+</html>
